@@ -23,13 +23,87 @@
   <!-- ASCII Controls Overlay -->
   <div id="asciiControlsOverlay">
     <div class="overlayContent">
+      <!-- Aspect Ratio -->
+      <label>Aspect Ratio</label><br />
+      <select id="aspectRatioSelect" onchange="handleAspectRatioChange()">
+        <option value="16:9" selected>Default (16×9)</option>
+        <option value="1:1">1×1 Square</option>
+        <option value="4:5">4×5</option>
+      </select>
+      <br /><br />
+
+      <!-- Pixel Size (range input) -->
       <label>Pixel Size</label>
-      <input type="range" min="3" max="100" value="10" oninput="params.pixelSize = parseInt(this.value)" />
+      <input
+        type="range"
+        id="pixelSizeRange"
+        min="1"
+        max="64"
+        value="10"
+        oninput="updatePixelSize(this.value)"
+      />
       <br />
+
+      <!-- Text Size (range input) -->
       <label>Text Size</label>
-      <input type="range" min="1" max="50" value="13" oninput="params.textSize = parseInt(this.value)" />
+      <input
+        type="range"
+        id="textSizeRange"
+        min="1"
+        max="64"
+        value="13"
+        oninput="updateTextSize(this.value)"
+      />
       <br />
-      <!-- Add more controls here as needed -->
+
+      <!-- Character Set -->
+      <label>Characters</label><br />
+      <select id="characterSetSelect" onchange="handleCharacterSetChange()">
+        <option value="default">.:-=+*#%@ (Default)</option>
+        <option value="asciiLetters">ASCII Letters (A-Za-z0-9)</option>
+        <option value="custom">Custom</option>
+      </select>
+      <br />
+      <!-- Custom Character Set Field -->
+      <input
+        id="customCharacterSet"
+        type="text"
+        value=".:-=+*#%@"
+        style="display:none; margin-top:5px;"
+        oninput="handleCustomCharacters()"
+      />
+      <br /><br />
+
+      <!-- Text Style -->
+      <label>Text Style</label><br />
+      <select id="textStyleSelect" onchange="handleTextStyleChange()">
+        <option value="NORMAL" selected>Normal</option>
+        <option value="BOLD">Bold</option>
+        <option value="ITALIC">Italic</option>
+      </select>
+      <br /><br />
+
+      <!-- Text Color -->
+      <label>Text Color</label><br />
+      <input
+        id="textColorInput"
+        type="color"
+        value="#000000"
+        onchange="handleTextColorChange()"
+      />
+      <br /><br />
+
+      <!-- Background Color -->
+      <label>Background Color</label><br />
+      <input
+        id="backgroundColorInput"
+        type="color"
+        value="#ffffff"
+        onchange="handleBackgroundColorChange()"
+      />
+      <br /><br />
+
+      <!-- Close Button -->
       <button onclick="toggleASCIIControl()">Close</button>
     </div>
   </div>
