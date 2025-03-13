@@ -24,9 +24,15 @@ function setup() {
   
   // For iOS inline playback
   if (capture) capture.elt.setAttribute('playsinline', '');
+  
+  // Listen for orientation changes to adjust if needed (for front camera)
+  window.addEventListener('orientationchange', function() {
+    // You can add further orientation handling here if needed.
+  });
 }
 
-// Modified draw() function for vertical preview when 16:9 or 4:5 is selected
+// Modified draw() function for vertical preview when 16:9 or 4:5 is selected.
+// Also, if using the front camera, the drawn content is mirrored.
 function draw() {
   background(params.background);
   if (!capturing) return;
@@ -92,6 +98,12 @@ function draw() {
   translate(offsetX, offsetY);
   scale(scaleFactor);
   
+  // Mirror the drawn image if using the front camera (to simulate a mirror).
+  if (frontCam) {
+    scale(-1, 1);
+    translate(-videoW, 0);
+  }
+  
   capture.loadPixels();
   if (capture.pixels.length > 0) {
     // Apply text style
@@ -141,6 +153,8 @@ function initCamera(videoConstraints) {
   capture = createCapture(constraints, () => {
     capturing = true;
     console.log("Camera initialized:", constraints);
+    // We no longer apply capture.elt.style.transform here because the mirroring
+    // will be handled during the canvas draw.
   });
   capture.hide();
 }
