@@ -232,7 +232,8 @@ function toggleASCIIControl() {
 function handleAspectRatioChange() {
   let select = document.getElementById('aspectRatioSelect');
   currentAspectRatio = select.value; // e.g. "16:9", "1:1", or "4:5"
-  // The draw() function will now use the updated aspect ratio.
+  // Refresh the page to properly display the new aspect ratio view.
+  location.reload();
 }
 
 /**************************************
