@@ -23,6 +23,7 @@
   <!-- ASCII Controls Overlay -->
   <div id="asciiControlsOverlay">
     <div class="overlayContent">
+
       <!-- Aspect Ratio -->
       <label>Aspect Ratio</label><br />
       <select id="aspectRatioSelect" onchange="handleAspectRatioChange()">
@@ -32,29 +33,39 @@
       </select>
       <br /><br />
 
-      <!-- Pixel Size (range input) -->
-      <label>Pixel Size</label>
-      <input
-        type="range"
-        id="pixelSizeRange"
-        min="1"
-        max="64"
-        value="10"
-        oninput="updatePixelSize(this.value)"
-      />
-      <br />
+      <!-- pixelSize with caret + range -->
+      <div class="controlGroup">
+        <label>pixelSize: <span id="pixelSizeValue">10</span></label>
+        <div class="rangeContainer">
+          <button class="caretButton" onclick="adjustPixelSize(-1)">&#9664;</button>
+          <input
+            type="range"
+            id="pixelSizeRange"
+            min="1"
+            max="64"
+            value="10"
+            oninput="updatePixelSize(this.value)"
+          />
+          <button class="caretButton" onclick="adjustPixelSize(1)">&#9654;</button>
+        </div>
+      </div>
 
-      <!-- Text Size (range input) -->
-      <label>Text Size</label>
-      <input
-        type="range"
-        id="textSizeRange"
-        min="1"
-        max="64"
-        value="13"
-        oninput="updateTextSize(this.value)"
-      />
-      <br />
+      <!-- textSize with caret + range -->
+      <div class="controlGroup">
+        <label>textSize: <span id="textSizeValue">13</span></label>
+        <div class="rangeContainer">
+          <button class="caretButton" onclick="adjustTextSize(-1)">&#9664;</button>
+          <input
+            type="range"
+            id="textSizeRange"
+            min="1"
+            max="64"
+            value="13"
+            oninput="updateTextSize(this.value)"
+          />
+          <button class="caretButton" onclick="adjustTextSize(1)">&#9654;</button>
+        </div>
+      </div>
 
       <!-- Character Set -->
       <label>Characters</label><br />
@@ -64,7 +75,6 @@
         <option value="custom">Custom</option>
       </select>
       <br />
-      <!-- Custom Character Set Field -->
       <input
         id="customCharacterSet"
         type="text"

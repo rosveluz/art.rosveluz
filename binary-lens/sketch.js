@@ -14,16 +14,14 @@ let params = {
 let capture;
 let capturing = false;
 let frontCam = false; // to toggle front/back
-
-// Track aspect ratio if user changes it
-let currentAspectRatio = '16:9';
+let currentAspectRatio = "16:9"; // track user's chosen aspect ratio
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  // Default constraints to back camera with "16:9" ratio
+  // Default constraints (back camera)
   initCamera({ facingMode: { exact: "environment" } });
-
+  
   // For iOS inline playback
   if (capture) capture.elt.setAttribute('playsinline', '');
 }
@@ -32,25 +30,24 @@ function draw() {
   background(params.background);
   if (!capturing) return;
 
-  // Get the native video dimensions
   let videoW = capture.elt.videoWidth;
   let videoH = capture.elt.videoHeight;
   if (videoW === 0 || videoH === 0) return;
   
-  // "Cover" logic: fill entire canvas while preserving aspect ratio
+  // "Cover" logic to fill entire canvas while preserving aspect ratio
   let scaleFactor = max(width / videoW, height / videoH);
   let drawWidth = videoW * scaleFactor;
   let drawHeight = videoH * scaleFactor;
   let offsetX = (width - drawWidth) / 2;
   let offsetY = (height - drawHeight) / 2;
-  
+
   capture.loadPixels();
   if (capture.pixels.length > 0) {
     push();
     translate(offsetX, offsetY);
     scale(scaleFactor);
 
-    // Apply text style, color, size
+    // Apply text style
     if (params.textStyle === 'BOLD') {
       textStyle(BOLD);
     } else if (params.textStyle === 'ITALIC') {
@@ -61,7 +58,6 @@ function draw() {
     fill(params.colour);
     textSize(params.textSize);
 
-    // ASCII conversion
     let chars = params.characters.split('');
     for (let y = 0; y < videoH; y += params.pixelSize) {
       for (let x = 0; x < videoW; x += params.pixelSize) {
@@ -69,7 +65,7 @@ function draw() {
         let r = capture.pixels[index + 0];
         let g = capture.pixels[index + 1];
         let b = capture.pixels[index + 2];
-        
+
         let bright = (r + g + b) / 3;
         let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
         text(chars[charIndex], x, y);
@@ -102,10 +98,12 @@ function initCamera(videoConstraints) {
   capture.hide();
 }
 
+/**************************************
+ *  Switch Camera
+ **************************************/
 function switchCamera() {
   frontCam = !frontCam;
 
-  // Re-init camera with current aspect ratio
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
 
@@ -167,25 +165,12 @@ function toggleASCIIControl() {
 }
 
 /**************************************
- *  ASCII Controls: Range Sliders
- **************************************/
-function updatePixelSize(val) {
-  // clamp 1-64
-  let v = constrain(parseInt(val), 1, 64);
-  params.pixelSize = v;
-}
-function updateTextSize(val) {
-  let v = constrain(parseInt(val), 1, 64);
-  params.textSize = v;
-}
-
-/**************************************
- *  ASCII Controls: Aspect Ratio
+ *  Aspect Ratio
  **************************************/
 function handleAspectRatioChange() {
   let select = document.getElementById('aspectRatioSelect');
   currentAspectRatio = select.value; // e.g. "16:9"
-  
+
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
 
@@ -197,7 +182,43 @@ function handleAspectRatioChange() {
 }
 
 /**************************************
- *  ASCII Controls: Character Set
+ *  pixelSize with Carets + Range
+ **************************************/
+function adjustPixelSize(delta) {
+  let slider = document.getElementById('pixelSizeRange');
+  let val = parseInt(slider.value) + delta;
+  val = constrain(val, 1, 64); // p5.js has constrain()
+  slider.value = val;
+  updatePixelSize(val);
+}
+
+function updatePixelSize(newVal) {
+  let val = parseInt(newVal);
+  val = constrain(val, 1, 64);
+  params.pixelSize = val;
+  document.getElementById('pixelSizeValue').textContent = val;
+}
+
+/**************************************
+ *  textSize with Carets + Range
+ **************************************/
+function adjustTextSize(delta) {
+  let slider = document.getElementById('textSizeRange');
+  let val = parseInt(slider.value) + delta;
+  val = constrain(val, 1, 64);
+  slider.value = val;
+  updateTextSize(val);
+}
+
+function updateTextSize(newVal) {
+  let val = parseInt(newVal);
+  val = constrain(val, 1, 64);
+  params.textSize = val;
+  document.getElementById('textSizeValue').textContent = val;
+}
+
+/**************************************
+ *  Character Set
  **************************************/
 function handleCharacterSetChange() {
   let select = document.getElementById('characterSetSelect');
@@ -221,7 +242,7 @@ function handleCustomCharacters() {
 }
 
 /**************************************
- *  ASCII Controls: Text Style
+ *  Text Style
  **************************************/
 function handleTextStyleChange() {
   let styleSelect = document.getElementById('textStyleSelect');
@@ -229,7 +250,7 @@ function handleTextStyleChange() {
 }
 
 /**************************************
- *  ASCII Controls: Text/Background Color
+ *  Text/Background Color
  **************************************/
 function handleTextColorChange() {
   let colorInput = document.getElementById('textColorInput');

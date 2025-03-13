@@ -63,9 +63,70 @@ html, body {
     text-align: center;
   }
   
+  /* Snapshot image in the overlay */
   #snapshotImg {
     max-width: 100%;
     height: auto;
     object-fit: contain;
+  }
+  
+  /* 
+     Additional styling for the new caret + slider approach 
+  */
+  .controlGroup {
+    margin-bottom: 20px;
+    text-align: left; /* so labels align left if desired */
+  }
+  
+  .rangeContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  
+  /* Caret buttons (40×40) */
+  .caretButton {
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border-radius: 4px; /* optional */
+  }
+  
+  /* Style the range sliders */
+  input[type="range"] {
+    -webkit-appearance: none; /* remove default styling */
+    width: 120px; /* track width */
+    height: 8px;  /* track height */
+    background: #000; /* track color */
+    outline: none;
+    border-radius: 4px;
+    margin: 0;
+  }
+  
+  /* Chrome/Safari thumb */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; 
+    height: 20px; 
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid #666;
+    cursor: pointer;
+  }
+  
+  /* Firefox thumb */
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid #666;
+    cursor: pointer;
   }
   
