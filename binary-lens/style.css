@@ -171,12 +171,12 @@ html, body {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  font-size: 1.8rem;
+  font-size: 1.8rem !important; 
   padding: 8px 12px;
 }
 
 .overlayContent label {
-  font-size: 1.8rem;
+  font-size: 1.8rem !important;
   font-weight: 600;
 } 
 
@@ -192,7 +192,7 @@ html, body {
 
 #backgroundColorInput,
 #textColorInput {
-  height: 120px;
+  height: 80px;
 }
 
 .controlGroup label {
