@@ -15,7 +15,7 @@ html, body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 64px;
 }
 
 /* Generic styling for the round buttons */

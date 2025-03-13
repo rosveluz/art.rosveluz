@@ -6,16 +6,13 @@
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <!-- UI Buttons at the bottom of the screen -->
   <div id="cameraUI">
     <!-- Red ASCII control button -->
     <button class="bigButton redButton" onclick="toggleASCIIControl()">ASCII</button>
-
     <!-- Shutter button -->
     <button class="bigButton shutterButton" onclick="takeSnapshot()">Shoot</button>
-
     <!-- Blue camera switcher -->
     <button class="bigButton blueButton" onclick="switchCamera()">Switch</button>
   </div>
@@ -23,7 +20,6 @@
   <!-- ASCII Controls Overlay -->
   <div id="asciiControlsOverlay">
     <div class="overlayContent">
-
       <!-- Aspect Ratio -->
       <label>Aspect Ratio</label><br />
       <select id="aspectRatioSelect" onchange="handleAspectRatioChange()">
@@ -35,14 +31,14 @@
 
       <!-- pixelSize with caret + range -->
       <div class="controlGroup">
-        <label>pixelSize: <span id="pixelSizeValue">10</span></label>
+        <label>pixelSize: <span id="pixelSizeValue">4</span></label>
         <div class="rangeContainer">
           <button class="caretButton" onclick="adjustPixelSize(-1)">&#9664;</button>
           <input
             type="range"
             id="pixelSizeRange"
             min="1"
-            max="64"
+            max="32"
             value="4"
             oninput="updatePixelSize(this.value)"
           />
@@ -52,14 +48,14 @@
 
       <!-- textSize with caret + range -->
       <div class="controlGroup">
-        <label>textSize: <span id="textSizeValue">13</span></label>
+        <label>textSize: <span id="textSizeValue">10</span></label>
         <div class="rangeContainer">
           <button class="caretButton" onclick="adjustTextSize(-1)">&#9664;</button>
           <input
             type="range"
             id="textSizeRange"
             min="1"
-            max="64"
+            max="32"
             value="10"
             oninput="updateTextSize(this.value)"
           />
