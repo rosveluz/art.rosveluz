@@ -149,8 +149,8 @@ html, body {
 /* Chrome/Safari thumb */
 .rangeContainer input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px; 
-  height: 20px; 
+  width: 40px; 
+  height: 40px; 
   background: #fff;
   border-radius: 50%;
   border: 2px solid #666;
@@ -159,8 +159,8 @@ html, body {
 
 /* Firefox thumb */
 .rangeContainer input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   background: #fff;
   border-radius: 50%;
   border: 2px solid #666;
@@ -171,7 +171,7 @@ html, body {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   padding: 8px 12px;
 }
 
@@ -187,7 +187,7 @@ html, body {
 
 .overlayContent select,
 .overlayContent option {
-  font-size: 1.4rem !important;
+  font-size: 1.8rem !important;
 }
 
 #backgroundColorInput,
