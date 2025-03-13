@@ -1,10 +1,53 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=p, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <title>ASCII Camera</title>
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <p>Test Page</p>
+  <!-- UI Buttons at the bottom of the screen -->
+  <div id="cameraUI">
+    <!-- Red ASCII control button -->
+    <button class="bigButton redButton" onclick="toggleASCIIControl()">ASCII</button>
+
+    <!-- Shutter button -->
+    <button class="bigButton shutterButton" onclick="takeSnapshot()">Shoot</button>
+
+    <!-- Blue camera switcher -->
+    <button class="bigButton blueButton" onclick="switchCamera()">Switch</button>
+  </div>
+
+  <!-- ASCII Controls Overlay -->
+  <div id="asciiControlsOverlay">
+    <div class="overlayContent">
+      <label>Pixel Size</label>
+      <input type="range" min="3" max="100" value="10" oninput="params.pixelSize = parseInt(this.value)" />
+      <br />
+      <label>Text Size</label>
+      <input type="range" min="1" max="50" value="13" oninput="params.textSize = parseInt(this.value)" />
+      <br />
+      <!-- Add more controls here as needed -->
+      <button onclick="toggleASCIIControl()">Close</button>
+    </div>
+  </div>
+
+  <!-- Snapshot Overlay -->
+  <div id="mediaManagementOverlay">
+    <div class="overlayContent">
+      <img id="snapshotImg" />
+      <br /><br />
+      <button onclick="deletePhoto()">Delete</button>
+      <button onclick="savePhoto()">Save</button>
+      <button onclick="sharePhoto()">Share</button>
+    </div>
+  </div>
+
+  <!-- Load p5.js from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.min.js"></script>
+  <!-- Load your external JavaScript -->
+  <script src="sketch.js"></script>
 </body>
 </html>
