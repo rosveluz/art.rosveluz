@@ -29,29 +29,43 @@ function setup() {
     console.log("Camera initialized");
   });
   
-  // For iOS inline
+  // For iOS inline playback
   capture.elt.setAttribute('playsinline', '');
   
-  // Match the capture size to our canvas
-  capture.size(windowWidth, windowHeight);
+  // Let the capture use its native resolution
+  // (Don't force capture.size(windowWidth, windowHeight))
   capture.hide();
 }
 
 function draw() {
   background(params.background);
   if (!capturing) return;
-
-  // ASCII text settings
-  textSize(params.textSize);
-  fill(params.colour);
-
+  
+  // Get the native video dimensions
+  let videoW = capture.elt.videoWidth;
+  let videoH = capture.elt.videoHeight;
+  if (videoW === 0 || videoH === 0) return;
+  
+  // Calculate a scale factor using "cover" logic:
+  // This makes the video fill the canvas entirely (like background-size: cover)
+  let scaleFactor = max(width / videoW, height / videoH);
+  let drawWidth = videoW * scaleFactor;
+  let drawHeight = videoH * scaleFactor;
+  let offsetX = (width - drawWidth) / 2;
+  let offsetY = (height - drawHeight) / 2;
+  
   capture.loadPixels();
-
   if (capture.pixels.length > 0) {
     let chars = params.characters.split('');
-    for (let y = 0; y < capture.height; y += params.pixelSize) {
-      for (let x = 0; x < capture.width; x += params.pixelSize) {
-        let index = (x + y * capture.width) * 4;
+    push();
+    // Translate and scale so that the video feed covers the canvas
+    translate(offsetX, offsetY);
+    scale(scaleFactor);
+    
+    // Iterate over the native video resolution (which will be cropped if needed)
+    for (let y = 0; y < videoH; y += params.pixelSize) {
+      for (let x = 0; x < videoW; x += params.pixelSize) {
+        let index = (x + y * videoW) * 4;
         let r = capture.pixels[index + 0];
         let g = capture.pixels[index + 1];
         let b = capture.pixels[index + 2];
@@ -61,10 +75,12 @@ function draw() {
         text(chars[charIndex], x, y);
       }
     }
+    pop();
   }
 }
 
 function windowResized() {
+  // Resize canvas but leave the capture feed at its native resolution.
   resizeCanvas(windowWidth, windowHeight);
 }
 
@@ -88,7 +104,6 @@ function switchCamera() {
   });
   
   capture.elt.setAttribute('playsinline', '');
-  capture.size(windowWidth, windowHeight);
   capture.hide();
 }
 
