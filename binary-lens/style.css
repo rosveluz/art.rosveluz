@@ -215,10 +215,10 @@ html, body {
 }
 
 #capDelete {
-  background-color: #da0012; /* red background */
+  background-color: rgb(43, 43, 43); /* red background */
   color: #fff;              /* white text */
   font-size: 1.4rem;
-  padding: 10px 20px;
+  padding: 24px 36px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -226,10 +226,10 @@ html, body {
 }
 
 #capSave {
-  background-color: #58b40d; /* red background */
+  background-color: rgb(43, 43, 43); /* red background */
   color: #fff;              /* white text */
   font-size: 1.4rem;
-  padding: 10px 20px;
+  padding: 24px 36px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -237,10 +237,10 @@ html, body {
 }
 
 #capShare {
-  background-color: #791af5; /* red background */
+  background-color: rgb(43, 43, 43); /* red background */
   color: #fff;              /* white text */
   font-size: 1.4rem;
-  padding: 10px 20px;
+  padding: 24px 36px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
