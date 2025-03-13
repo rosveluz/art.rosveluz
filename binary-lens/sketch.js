@@ -191,9 +191,10 @@ function deletePhoto() {
 
 function savePhoto() {
   let link = document.createElement('a');
-  let imgSrc = document.getElementById('snapshotImg').src;
-  link.download = 'ascii-photo.png';
-  link.href = imgSrc;
+  // Generate a unique filename using a timestamp.
+  let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
+  link.download = uniqueName;
+  link.href = canvas.toDataURL('image/png');
   link.click();
 }
 
@@ -202,7 +203,7 @@ function sharePhoto() {
   fetch(dataURL)
     .then(res => res.blob())
     .then(blob => {
-      const file = new File([blob], 'ascii-photo.png', { type: 'image/png' });
+      const file = new File([blob], 'binaryLens-' + new Date().getTime() + '.png', { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         navigator.share({
           files: [file],
