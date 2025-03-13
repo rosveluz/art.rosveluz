@@ -14,10 +14,17 @@ let params = {
 let capture;
 let capturing = false;
 let frontCam = false; // to toggle front/back
-let currentAspectRatio = "16:9"; // track user's chosen aspect ratio
+// Use localStorage to persist the selected aspect ratio across page reloads.
+let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9"; 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  
+  // Update the aspect ratio select element if it exists.
+  let aspectSelect = document.getElementById('aspectRatioSelect');
+  if(aspectSelect){
+    aspectSelect.value = currentAspectRatio;
+  }
 
   // Default constraints (back camera)
   initCamera({ facingMode: { exact: "environment" } });
@@ -232,6 +239,8 @@ function toggleASCIIControl() {
 function handleAspectRatioChange() {
   let select = document.getElementById('aspectRatioSelect');
   currentAspectRatio = select.value; // e.g. "16:9", "1:1", or "4:5"
+  // Save the selected aspect ratio in localStorage so it's remembered after refresh.
+  localStorage.setItem('currentAspectRatio', currentAspectRatio);
   // Refresh the page to properly display the new aspect ratio view.
   location.reload();
 }
