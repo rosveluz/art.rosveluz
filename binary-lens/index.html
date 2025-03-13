@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>ASCII Camera</title>
+  <title>Binary Lens - ASCII Image Capture</title>
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,11 +10,11 @@
   <!-- UI Buttons at the bottom of the screen -->
   <div id="cameraUI">
     <!-- Red ASCII control button -->
-    <button class="bigButton redButton" onclick="toggleASCIIControl()">ASCII</button>
+    <button class="bigButton redButton" onclick="toggleASCIIControl()">Options</button>
     <!-- Shutter button -->
     <button class="bigButton shutterButton" onclick="takeSnapshot()">Shoot</button>
     <!-- Blue camera switcher -->
-    <button class="bigButton blueButton" onclick="switchCamera()">Switch</button>
+    <button class="bigButton blueButton" onclick="switchCamera()">Camera</button>
   </div>
 
   <!-- ASCII Controls Overlay -->
@@ -120,7 +120,7 @@
       <img id="snapshotImg" />
       <br /><br />
       <div class="buttonGroup">
-        <button id="capDelete" onclick="deletePhoto()">Delete</button>
+        <button id="capDelete" onclick="deletePhoto()">Cancel</button>
         <button id="capSave" onclick="savePhoto()">Save</button>
         <button id="capShare" onclick="sharePhoto()">Share</button>
       </div>
