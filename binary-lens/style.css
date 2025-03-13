@@ -81,7 +81,7 @@ html, body {
   background: white;
   box-sizing: border-box;
   text-align: center; /* you can switch to left if you prefer */
-  padding: 24px 32px;
+  padding: 32px 32px;
 }
 
 /* Snapshot image in the overlay */
