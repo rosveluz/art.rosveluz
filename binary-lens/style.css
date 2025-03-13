@@ -1,132 +1,254 @@
 /* Remove default margins and fill the screen */
 html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* optional, if you want a full-screen experience */
-    font-family: sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* optional, if you want a full-screen experience */
+  font-family: sans-serif;
+  font-size: 1.2rem;
+}
+
+/* Main UI container at the bottom */
+#cameraUI {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Generic styling for the round buttons */
+.bigButton {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  color: #fff;
+  border: none;
+  outline: none;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Specific color classes */
+.redButton {
+  background-color: rgb(43, 43, 43);
+}
+.shutterButton {
+  background-color: rgb(43, 43, 43);
+  width: 200px;
+  height: 200px;
+}
+.blueButton {
+  background-color: rgb(43, 43, 43);
+}
+
+/* Overlays for controls / snapshots */
+#asciiControlsOverlay,
+#mediaManagementOverlay {
+  display: none; /* hidden by default */
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  /* allows scrolling if overlay content is taller than the screen */
+  overflow: auto;
+}
+
+/* Centered content inside the overlay */
+.overlayContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   
-  /* Main UI container at the bottom */
-  #cameraUI {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-bottom: 20px;
-  }
+  /* Updated to allow up to 800px, at least 600px on wider screens */
+  width: 80%;              /* fallback for small screens */
+  max-width: 800px;        /* never exceed 800px */
   
-  /* Generic styling for the round buttons */
-  .bigButton {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    color: #fff;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  /* Specific color classes */
-  .redButton {
-    background-color: red;
-  }
-  .shutterButton {
-    background-color: gray;
-  }
-  .blueButton {
-    background-color: blue;
-  }
-  
-  /* Overlays for controls / snapshots */
-  #asciiControlsOverlay,
-  #mediaManagementOverlay {
-    display: none; /* hidden by default */
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-  }
-  
-  /* Centered content inside the overlay */
+  /* On screens >= 800px, enforce a 600px min width */
+  /* (this is the only media query) */
+}
+@media (min-width: 800px) {
   .overlayContent {
-    margin: auto;
-    background: white;
-    width: 80%;
-    max-width: 400px;
-    padding: 20px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    text-align: center;
+    min-width: 600px;
   }
-  
-  /* Snapshot image in the overlay */
-  #snapshotImg {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-  
-  /* 
-     Additional styling for the new caret + slider approach 
-  */
-  .controlGroup {
-    margin-bottom: 20px;
-    text-align: left; /* so labels align left if desired */
-  }
-  
-  .rangeContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5px;
-  }
-  
-  /* Caret buttons (40×40) */
-  .caretButton {
-    width: 40px;
-    height: 40px;
-    margin: 0 5px;
-    font-size: 20px;
-    border: none;
-    cursor: pointer;
-    background: #333;
-    color: #fff;
-    border-radius: 4px; /* optional */
-  }
-  
-  /* Style the range sliders */
-  input[type="range"] {
-    -webkit-appearance: none; /* remove default styling */
-    width: 120px; /* track width */
-    height: 8px;  /* track height */
-    background: #000; /* track color */
-    outline: none;
-    border-radius: 4px;
-    margin: 0;
-  }
-  
-  /* Chrome/Safari thumb */
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px; 
-    height: 20px; 
-    background: #fff;
-    border-radius: 50%;
-    border: 2px solid #666;
-    cursor: pointer;
-  }
-  
-  /* Firefox thumb */
-  input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #fff;
-    border-radius: 50%;
-    border: 2px solid #666;
-    cursor: pointer;
-  }
-  
+}
+
+/* Box styling for the overlay content */
+.overlayContent {
+  background: white;
+  box-sizing: border-box;
+  text-align: center; /* you can switch to left if you prefer */
+  padding: 24px 32px;
+}
+
+/* Snapshot image in the overlay */
+#snapshotImg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 
+   Additional styling for the new caret + slider approach
+*/
+.controlGroup {
+  margin-bottom: 20px;
+}
+
+/* Make label block-level for consistent spacing */
+.overlayContent label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+/* Let the <select>, <input> fill the container width */
+.overlayContent select,
+.overlayContent input[type="text"],
+.overlayContent input[type="color"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+/* Range container: caret buttons + slider in a row */
+.rangeContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+/* Caret buttons (40×40) */
+.caretButton {
+  width: 80px;
+  height: 80px;
+  margin: 0 5px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  background: #333;
+  color: #fff;
+  border-radius: 4px; /* optional */
+}
+
+/* Let the slider stretch to fill leftover space */
+.rangeContainer input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none; /* remove default styling */
+  height: 8px;  /* track height */
+  background: #000; /* track color */
+  outline: none;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+
+/* Chrome/Safari thumb */
+.rangeContainer input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; 
+  height: 20px; 
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #666;
+  cursor: pointer;
+}
+
+/* Firefox thumb */
+.rangeContainer input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #666;
+  cursor: pointer;
+}
+
+.overlayContent select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-size: 1.4rem;
+  padding: 8px 12px;
+}
+
+.overlayContent label {
+  font-size: 1.8rem;
+  font-weight: 600;
+} 
+
+.overlayContent select {
+  font-size: inherit;
+}
+
+
+.overlayContent select,
+.overlayContent option {
+  font-size: 1.4rem !important;
+}
+
+#backgroundColorInput,
+#textColorInput {
+  height: 120px;
+}
+
+.controlGroup label {
+  text-align: center;
+}
+
+.close-button {
+  background-color: #f44336; /* red background */
+  color: #fff;              /* white text */
+  font-size: 1.4rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: #d32f2f; /* darker red on hover */
+}
+
+#capDelete {
+  background-color: #da0012; /* red background */
+  color: #fff;              /* white text */
+  font-size: 1.4rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#capSave {
+  background-color: #58b40d; /* red background */
+  color: #fff;              /* white text */
+  font-size: 1.4rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#capShare {
+  background-color: #791af5; /* red background */
+  color: #fff;              /* white text */
+  font-size: 1.4rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 32px;       /* Sets 10px space between each button */
+  justify-content: center; /* Centers the buttons in the container */
+}

@@ -3,11 +3,11 @@
  **************************************/
 
 let params = {
-  pixelSize: 10,
+  pixelSize: 4,
   colour: [0, 0, 0],
   background: [255, 255, 255],
   characters: ' .:-=+*#%@',
-  textSize: 13,
+  textSize: 10,
   textStyle: 'NORMAL'
 };
 
