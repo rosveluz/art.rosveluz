@@ -14,27 +14,30 @@ let params = {
 let capture;
 let capturing = false;
 let frontCam = false; // to toggle front/back
-// Use localStorage to persist the selected aspect ratio across page reloads.
-let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9"; 
+// Retrieve the stored aspect ratio (if any) or default to "16:9".
+let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
-  // Update the aspect ratio select element if it exists.
+  // Update the select element's value if it exists.
   let aspectSelect = document.getElementById('aspectRatioSelect');
-  if(aspectSelect){
+  if(aspectSelect) {
     aspectSelect.value = currentAspectRatio;
   }
 
-  // Default constraints (back camera)
-  initCamera({ facingMode: { exact: "environment" } });
+  // Default constraints (back camera) with current aspect ratio.
+  let [arW, arH] = currentAspectRatio.split(':');
+  let aspect = parseFloat(arW) / parseFloat(arH);
+  let constraints = { facingMode: { exact: "environment" }, aspectRatio: aspect };
+  initCamera(constraints);
   
   // For iOS inline playback
   if (capture) capture.elt.setAttribute('playsinline', '');
   
-  // Listen for orientation changes to adjust if needed (for front camera)
+  // Orientation change listener (if needed for front camera)
   window.addEventListener('orientationchange', function() {
-    // You can add further orientation handling here if needed.
+    // Additional orientation handling can be added here.
   });
 }
 
@@ -105,7 +108,7 @@ function draw() {
   translate(offsetX, offsetY);
   scale(scaleFactor);
   
-  // Mirror the drawn image if using the front camera (to simulate a mirror).
+  // Mirror the drawn image if using the front camera (simulate a mirror).
   if (frontCam) {
     scale(-1, 1);
     translate(-videoW, 0);
@@ -160,8 +163,7 @@ function initCamera(videoConstraints) {
   capture = createCapture(constraints, () => {
     capturing = true;
     console.log("Camera initialized:", constraints);
-    // We no longer apply capture.elt.style.transform here because the mirroring
-    // will be handled during the canvas draw.
+    // Mirroring will be handled in draw()
   });
   capture.hide();
 }
@@ -239,10 +241,17 @@ function toggleASCIIControl() {
 function handleAspectRatioChange() {
   let select = document.getElementById('aspectRatioSelect');
   currentAspectRatio = select.value; // e.g. "16:9", "1:1", or "4:5"
-  // Save the selected aspect ratio in localStorage so it's remembered after refresh.
+  // Save the selected aspect ratio so it's remembered.
   localStorage.setItem('currentAspectRatio', currentAspectRatio);
-  // Refresh the page to properly display the new aspect ratio view.
-  location.reload();
+  
+  // Reinitialize the camera with the new aspect ratio constraint.
+  let [arW, arH] = currentAspectRatio.split(':');
+  let aspect = parseFloat(arW) / parseFloat(arH);
+  let constraints = {
+    facingMode: frontCam ? "user" : { exact: "environment" },
+    aspectRatio: aspect
+  };
+  initCamera(constraints);
 }
 
 /**************************************
