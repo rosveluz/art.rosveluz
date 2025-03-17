@@ -47,36 +47,22 @@ function setup() {
 function draw() {
   background(params.background);
   if (!capturing) return;
-
+  
   let videoW = capture.elt.videoWidth;
   let videoH = capture.elt.videoHeight;
   if (videoW === 0 || videoH === 0) return;
   
-  // For our treatment:
-  // - 16:9 should remain in its native orientation.
-  // - For 4:5 on mobile (portrait mode), we want to rotate the feed so it appears upright.
-  let verticalPreview = false;
-  if (currentAspectRatio === "4:5" && windowWidth < windowHeight) {
-    verticalPreview = true;
-  }
+  // Do not apply any rotation for any aspect ratio.
+  // Both 16:9 and 4:5 will be treated the same: the available width and height are those of the window.
+  let availW = windowWidth;
+  let availH = windowHeight;
   
-  // Compute desired aspect ratio from selection.
+  // Compute the desired aspect ratio from the selection.
+  // For example, "16:9" gives 16/9 and "4:5" gives 4/5.
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
-  // (For 16:9 we do nothing; for 4:5, verticalPreview will handle orientation.)
   
-  // Determine available drawing dimensions.
-  let availW, availH;
-  if (verticalPreview) {
-    // For 4:5 on mobile portrait, swap dimensions so the feed fills the screen before rotation.
-    availW = windowHeight;
-    availH = windowWidth;
-  } else {
-    availW = windowWidth;
-    availH = windowHeight;
-  }
-  
-  // Calculate container dimensions to cover available area while maintaining the aspect ratio.
+  // Calculate container dimensions that "cover" the available area while preserving the aspect ratio.
   let containerWidth = availW;
   let containerHeight = availW / aspect;
   if (containerHeight > availH) {
@@ -84,7 +70,7 @@ function draw() {
     containerWidth = availH * aspect;
   }
   
-  // Determine scale factor for drawing the video feed.
+  // Determine the scale factor for drawing the video feed.
   let scaleFactor = max(containerWidth / videoW, containerHeight / videoH);
   let drawWidth = videoW * scaleFactor;
   let drawHeight = videoH * scaleFactor;
@@ -95,23 +81,16 @@ function draw() {
   let drawX = (availW - containerWidth) / 2;
   let drawY = (availH - containerHeight) / 2;
   
-  // Save these values for cropping when saving the image.
-  // (These are computed in the coordinate space of the canvas.)
+  // Save these values for cropping the image.
   previewX = drawX;
   previewY = drawY;
   previewWidth = containerWidth;
   previewHeight = containerHeight;
   
   push();
-  if (verticalPreview) {
-    // For 4:5 on mobile portrait, rotate the canvas –90° to correct orientation.
-    translate(windowWidth, 0);
-    rotate(-HALF_PI);
-  }
-  
-  // Translate to position the container.
+  // No rotation is applied.
   translate(drawX, drawY);
-  // Translate inside the container for proper centering of the video feed.
+  // Translate inside the container for proper centering.
   translate(offsetX, offsetY);
   scale(scaleFactor);
   
@@ -133,7 +112,7 @@ function draw() {
     }
     fill(params.colour);
     textSize(params.textSize);
-
+    
     let chars = params.characters.split('');
     for (let y = 0; y < videoH; y += params.pixelSize) {
       for (let x = 0; x < videoW; x += params.pixelSize) {
@@ -201,8 +180,8 @@ function deletePhoto() {
   document.getElementById('mediaManagementOverlay').classList.remove('showOverlay');
 }
 
-// In savePhoto(), we use the preview region multiplied by pixelDensity() so that on all devices
-// the saved image is cropped to the visible drawn area.
+// The savePhoto() function crops the canvas to the preview region.
+// Multiplying by pixelDensity() ensures proper cropping on high-density (mobile) displays.
 function savePhoto() {
   let d = pixelDensity();
   let cropped = get(previewX * d, previewY * d, previewWidth * d, previewHeight * d);
