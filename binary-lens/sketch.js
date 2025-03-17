@@ -55,7 +55,7 @@ function draw() {
   // Determine if a vertical preview is desired.
   // Only use vertical preview on mobile in portrait mode.
   let verticalPreview = false;
-  if (windowWidth < windowHeight && (currentAspectRatio === "16:9" || currentAspectRatio === "4:5")) {
+  if (windowWidth < windowHeight && currentAspectRatio === "16:9") {
     verticalPreview = true;
   }
   
