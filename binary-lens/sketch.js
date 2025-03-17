@@ -17,6 +17,9 @@ let frontCam = false; // to toggle front/back
 // Retrieve stored aspect ratio or default to "16:9"
 let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9";
 
+// Global variables to hold the preview (cropped) region
+let previewX = 0, previewY = 0, previewWidth = 0, previewHeight = 0;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
@@ -50,13 +53,14 @@ function draw() {
   if (videoW === 0 || videoH === 0) return;
   
   // Determine if vertical preview is desired
+  // (In your original code, verticalPreview is true for both 16:9 and 4:5)
   let verticalPreview = (currentAspectRatio === "16:9" || currentAspectRatio === "4:5");
   
   // Compute aspect ratio from currentAspectRatio
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
   
-  // For 16:9, invert ratio if vertical preview is desired
+  // For 16:9, invert ratio if vertical preview is desired (as per your original treatment)
   if (currentAspectRatio === "16:9" && verticalPreview) {
     aspect = 1 / aspect; // becomes 9:16 (≈0.5625)
   }
@@ -86,6 +90,16 @@ function draw() {
   let offsetX = (containerWidth - drawWidth) / 2;
   let offsetY = (containerHeight - drawHeight) / 2;
   
+  // Center the preview container in the available area.
+  let drawX = (availW - containerWidth) / 2;
+  let drawY = (availH - containerHeight) / 2;
+  
+  // Save these values for cropping when saving the image.
+  previewX = drawX;
+  previewY = drawY;
+  previewWidth = containerWidth;
+  previewHeight = containerHeight;
+  
   push();
   // If in landscape with vertical preview, rotate canvas to display portrait
   if (verticalPreview && windowWidth > windowHeight) {
@@ -93,9 +107,7 @@ function draw() {
     rotate(PI / 2);
   }
   
-  // Center the preview container in the available area.
-  let drawX = (availW - containerWidth) / 2;
-  let drawY = (availH - containerHeight) / 2;
+  // Translate to position the container.
   translate(drawX, drawY);
   
   // Center the video feed within the container.
@@ -189,12 +201,13 @@ function deletePhoto() {
   document.getElementById('mediaManagementOverlay').classList.remove('showOverlay');
 }
 
+// Updated savePhoto() now crops the canvas using the preview coordinates.
+// Multiplying by pixelDensity() ensures the correct crop on high-density mobile displays.
 function savePhoto() {
-  let link = document.createElement('a');
+  let d = pixelDensity();
+  let cropped = get(previewX * d, previewY * d, previewWidth * d, previewHeight * d);
   let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
-  link.download = uniqueName;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+  save(cropped, uniqueName);
 }
 
 function sharePhoto() {
@@ -227,23 +240,6 @@ function toggleMediaManagementOverlay() {
   const overlay = document.getElementById('mediaManagementOverlay');
   overlay.classList.toggle('showOverlay');
 }
-
-/**************************************
- *  Close Overlay When Clicking Outside Modal
- **************************************/
-// For ASCII Controls overlay
-document.getElementById('asciiControlsOverlay').addEventListener('click', function(e) {
-  if (e.target === this) {
-    this.classList.remove('showOverlay');
-  }
-});
-
-// For Media Management overlay
-document.getElementById('mediaManagementOverlay').addEventListener('click', function(e) {
-  if (e.target === this) {
-    this.classList.remove('showOverlay');
-  }
-});
 
 /**************************************
  *  Aspect Ratio
