@@ -29,13 +29,10 @@ function setup() {
     aspectSelect.value = currentAspectRatio;
   }
 
-  // Set default constraints (back camera) with the selected aspect ratio
+  // Set default constraints (back camera) with the current aspect ratio
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
-  let constraints = { 
-    facingMode: { exact: "environment" }, 
-    aspectRatio: aspect 
-  };
+  let constraints = { facingMode: { exact: "environment" }, aspectRatio: aspect };
   initCamera(constraints);
   
   // For iOS inline playback
@@ -43,7 +40,7 @@ function setup() {
   
   // Orientation change listener (if needed)
   window.addEventListener('orientationchange', function() {
-    // Additional orientation handling if required.
+    // Additional orientation handling can be added here.
   });
 }
 
@@ -51,167 +48,70 @@ function draw() {
   background(params.background);
   if (!capturing) return;
   
-  let videoW = capture.elt.videoWidth;
-  let videoH = capture.elt.videoHeight;
-  if (videoW === 0 || videoH === 0) return;
-  
-  // Branch: if 4:5 is selected and the device is in portrait (mobile), do special handling.
-  if (currentAspectRatio === "4:5" && windowWidth < windowHeight) {
-    // In this branch we treat the available space as swapped.
-    let availW = windowHeight; // swap dimensions
-    let availH = windowWidth;
+  capture.loadPixels();
+  if (capture.pixels.length > 0) {
+    // Draw the full-screen ASCII conversion.
+    // We scale the original camera feed to cover the entire canvas.
+    let videoW = capture.elt.videoWidth;
+    let videoH = capture.elt.videoHeight;
     
-    // Desired aspect ratio (4/5 = 0.8)
-    let [arW, arH] = currentAspectRatio.split(':');
-    let aspect = parseFloat(arW) / parseFloat(arH);
+    // Compute scaling factors to cover the canvas
+    let scaleFactorX = width / videoW;
+    let scaleFactorY = height / videoH;
+    let scaleFactor = max(scaleFactorX, scaleFactorY);
     
-    // Compute container dimensions in swapped space:
-    let containerWidth = availW;
-    let containerHeight = availW / aspect;
-    if (containerHeight > availH) {
-      containerHeight = availH;
-      containerWidth = availH * aspect;
-    }
-    
-    // Scale factor for the video feed
-    let scaleFactor = max(containerWidth / videoW, containerHeight / videoH);
-    let drawWidth = videoW * scaleFactor;
-    let drawHeight = videoH * scaleFactor;
-    let offsetX = (containerWidth - drawWidth) / 2;
-    let offsetY = (containerHeight - drawHeight) / 2;
-    
-    // Center the container in the swapped space
-    let drawX = (availW - containerWidth) / 2;
-    let drawY = (availH - containerHeight) / 2;
-    
-    // For cropping, we want the final drawn output (which will be rotated back) to be centered on the canvas.
-    // We'll compute the crop region in the final (unrotated) canvas:
-    // Since the final canvas is not swapped, use the normal canvas dimensions:
-    let finalAspect = aspect; // still 0.8
-    let canvasAspect = windowWidth / windowHeight;
-    let cropX, cropY, cropWidth, cropHeight;
-    if (canvasAspect > finalAspect) {
-      cropHeight = windowHeight;
-      cropWidth = windowHeight * finalAspect;
-      cropX = (windowWidth - cropWidth) / 2;
-      cropY = 0;
-    } else {
-      cropWidth = windowWidth;
-      cropHeight = windowWidth / finalAspect;
-      cropX = 0;
-      cropY = (windowHeight - cropHeight) / 2;
-    }
-    previewX = cropX;
-    previewY = cropY;
-    previewWidth = cropWidth;
-    previewHeight = cropHeight;
+    // Compute offsets to center the video drawing in the canvas (pre-scaling)
+    let offsetX = (width / scaleFactor - videoW) / 2;
+    let offsetY = (height / scaleFactor - videoH) / 2;
     
     push();
-      // Rotate the drawing by +90° to counteract the inherent 90° clockwise rotation.
-      // This will swap the canvas back to normal.
-      translate(0, windowHeight);
-      rotate(HALF_PI);
-      
-      // Now, in the rotated coordinate system, draw the container.
-      translate(drawX, drawY);
-      translate(offsetX, offsetY);
       scale(scaleFactor);
-      
-      if (frontCam) {
-        scale(-1, 1);
-        translate(-videoW, 0);
-      }
-      
-      capture.loadPixels();
-      if (capture.pixels.length > 0) {
-        if (params.textStyle === 'BOLD') {
-          textStyle(BOLD);
-        } else if (params.textStyle === 'ITALIC') {
-          textStyle(ITALIC);
-        } else {
-          textStyle(NORMAL);
-        }
-        fill(params.colour);
-        textSize(params.textSize);
-        let chars = params.characters.split('');
-        for (let y = 0; y < videoH; y += params.pixelSize) {
-          for (let x = 0; x < videoW; x += params.pixelSize) {
-            let index = (x + y * videoW) * 4;
-            let r = capture.pixels[index + 0];
-            let g = capture.pixels[index + 1];
-            let b = capture.pixels[index + 2];
-            let bright = (r + g + b) / 3;
-            let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
-            text(chars[charIndex], x, y);
-          }
-        }
-      }
-    pop();
-    
-  } else {
-    // Standard drawing branch for 16:9 or for 4:5 on landscape
-    let availW = windowWidth;
-    let availH = windowHeight;
-    let [arW, arH] = currentAspectRatio.split(':');
-    let aspect = parseFloat(arW) / parseFloat(arH);
-    
-    // Compute container dimensions to cover the available area.
-    let containerWidth = availW;
-    let containerHeight = availW / aspect;
-    if (containerHeight > availH) {
-      containerHeight = availH;
-      containerWidth = availH * aspect;
-    }
-    
-    let scaleFactor = max(containerWidth / videoW, containerHeight / videoH);
-    let drawWidth = videoW * scaleFactor;
-    let drawHeight = videoH * scaleFactor;
-    let offsetX = (containerWidth - drawWidth) / 2;
-    let offsetY = (containerHeight - drawHeight) / 2;
-    
-    let drawX = (availW - containerWidth) / 2;
-    let drawY = (availH - containerHeight) / 2;
-    
-    previewX = drawX;
-    previewY = drawY;
-    previewWidth = containerWidth;
-    previewHeight = containerHeight;
-    
-    push();
-      translate(drawX, drawY);
       translate(offsetX, offsetY);
-      scale(scaleFactor);
-      if (frontCam) {
-        scale(-1, 1);
-        translate(-videoW, 0);
-      }
       
-      capture.loadPixels();
-      if (capture.pixels.length > 0) {
-        if (params.textStyle === 'BOLD') {
-          textStyle(BOLD);
-        } else if (params.textStyle === 'ITALIC') {
-          textStyle(ITALIC);
-        } else {
-          textStyle(NORMAL);
-        }
-        fill(params.colour);
-        textSize(params.textSize);
-        let chars = params.characters.split('');
-        for (let y = 0; y < videoH; y += params.pixelSize) {
-          for (let x = 0; x < videoW; x += params.pixelSize) {
-            let index = (x + y * videoW) * 4;
-            let r = capture.pixels[index + 0];
-            let g = capture.pixels[index + 1];
-            let b = capture.pixels[index + 2];
-            let bright = (r + g + b) / 3;
-            let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
-            text(chars[charIndex], x, y);
-          }
+      // Set text style (note: textSize will be scaled too)
+      textSize(params.textSize);
+      textStyle(params.textStyle);
+      fill(params.colour);
+      textAlign(LEFT, TOP);
+      
+      let chars = params.characters.split('');
+      for (let y = 0; y < videoH; y += params.pixelSize) {
+        for (let x = 0; x < videoW; x += params.pixelSize) {
+          let index = (x + y * videoW) * 4;
+          let r = capture.pixels[index + 0];
+          let g = capture.pixels[index + 1];
+          let b = capture.pixels[index + 2];
+          let bright = (r + g + b) / 3;
+          let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
+          text(chars[charIndex], x, y);
         }
       }
     pop();
   }
+  
+  // --- Compute the crop region for saving ---
+  // We want the saved image to have the selected aspect ratio.
+  let [arW, arH] = currentAspectRatio.split(':');
+  let desiredAspect = parseFloat(arW) / parseFloat(arH);
+  let canvasAspect = width / height;
+  let cropX, cropY, cropWidth, cropHeight;
+  if (canvasAspect > desiredAspect) {
+    // Canvas is wider than desired: use full height.
+    cropHeight = height;
+    cropWidth = height * desiredAspect;
+    cropX = (width - cropWidth) / 2;
+    cropY = 0;
+  } else {
+    // Canvas is taller than desired: use full width.
+    cropWidth = width;
+    cropHeight = width / desiredAspect;
+    cropX = 0;
+    cropY = (height - cropHeight) / 2;
+  }
+  previewX = cropX;
+  previewY = cropY;
+  previewWidth = cropWidth;
+  previewHeight = cropHeight;
 }
 
 function windowResized() {
@@ -229,7 +129,6 @@ function initCamera(videoConstraints) {
     video: videoConstraints,
     audio: false
   };
-  
   capture = createCapture(constraints, () => {
     capturing = true;
     console.log("Camera initialized:", constraints);
@@ -265,7 +164,7 @@ function deletePhoto() {
   document.getElementById('mediaManagementOverlay').classList.remove('showOverlay');
 }
 
-// The savePhoto() function crops the canvas to the preview region.
+// savePhoto() crops the canvas to the computed region.
 // Multiplying by pixelDensity() ensures proper cropping on high-density displays.
 function savePhoto() {
   let d = pixelDensity();
