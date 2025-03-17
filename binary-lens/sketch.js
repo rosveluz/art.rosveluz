@@ -14,19 +14,19 @@ let params = {
 let capture;
 let capturing = false;
 let frontCam = false; // to toggle front/back
-// Retrieve the stored aspect ratio (if any) or default to "16:9".
+// Retrieve stored aspect ratio or default to "16:9"
 let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
-  // Update the select element's value if it exists.
+  // Update the aspect ratio select element
   let aspectSelect = document.getElementById('aspectRatioSelect');
-  if(aspectSelect) {
+  if (aspectSelect) {
     aspectSelect.value = currentAspectRatio;
   }
 
-  // Default constraints (back camera) with current aspect ratio.
+  // Set default constraints (back camera) with the current aspect ratio
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
   let constraints = { facingMode: { exact: "environment" }, aspectRatio: aspect };
@@ -35,14 +35,12 @@ function setup() {
   // For iOS inline playback
   if (capture) capture.elt.setAttribute('playsinline', '');
   
-  // Orientation change listener (if needed for front camera)
+  // Orientation change listener (if needed)
   window.addEventListener('orientationchange', function() {
     // Additional orientation handling can be added here.
   });
 }
 
-// Modified draw() function for vertical preview when 16:9 or 4:5 is selected.
-// Also, if using the front camera, the drawn content is mirrored.
 function draw() {
   background(params.background);
   if (!capturing) return;
@@ -51,23 +49,19 @@ function draw() {
   let videoH = capture.elt.videoHeight;
   if (videoW === 0 || videoH === 0) return;
   
-  // Determine if vertical preview is desired for these aspect ratios.
-  // For 16:9 we want to display it vertically (i.e. 9:16) so that the landscape width is fully used.
-  // For 4:5 the ratio (0.8) is already vertical.
+  // Determine if vertical preview is desired
   let verticalPreview = (currentAspectRatio === "16:9" || currentAspectRatio === "4:5");
   
-  // Get the ratio components and compute the desired aspect ratio (width/height).
+  // Compute aspect ratio from currentAspectRatio
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
   
-  // For 16:9, invert the ratio to make it portrait (vertical).
+  // For 16:9, invert ratio if vertical preview is desired
   if (currentAspectRatio === "16:9" && verticalPreview) {
     aspect = 1 / aspect; // becomes 9:16 (≈0.5625)
   }
-  // For "4:5", aspect = 4/5 (0.8), already vertical.
-
+  
   // Determine available drawing dimensions.
-  // If in landscape mode and a vertical preview is desired, swap dimensions.
   let availW, availH;
   if (verticalPreview && windowWidth > windowHeight) {
     availW = windowHeight;
@@ -77,7 +71,7 @@ function draw() {
     availH = windowHeight;
   }
   
-  // Calculate container dimensions to "cover" the available area while maintaining the desired aspect ratio.
+  // Calculate container dimensions to cover the available area while maintaining aspect ratio.
   let containerWidth = availW;
   let containerHeight = availW / aspect;
   if (containerHeight > availH) {
@@ -85,7 +79,7 @@ function draw() {
     containerWidth = availH * aspect;
   }
   
-  // Determine scale factor for drawing the video feed.
+  // Determine scale factor for the video feed.
   let scaleFactor = max(containerWidth / videoW, containerHeight / videoH);
   let drawWidth = videoW * scaleFactor;
   let drawHeight = videoH * scaleFactor;
@@ -93,7 +87,7 @@ function draw() {
   let offsetY = (containerHeight - drawHeight) / 2;
   
   push();
-  // If in landscape with vertical preview, rotate the canvas so the preview appears portrait.
+  // If in landscape with vertical preview, rotate canvas to display portrait
   if (verticalPreview && windowWidth > windowHeight) {
     translate(windowWidth, 0);
     rotate(PI / 2);
@@ -104,11 +98,11 @@ function draw() {
   let drawY = (availH - containerHeight) / 2;
   translate(drawX, drawY);
   
-  // Translate inside container for proper centering of the video feed.
+  // Center the video feed within the container.
   translate(offsetX, offsetY);
   scale(scaleFactor);
   
-  // Mirror the drawn image if using the front camera (simulate a mirror).
+  // Mirror the drawn image if using the front camera.
   if (frontCam) {
     scale(-1, 1);
     translate(-videoW, 0);
@@ -134,7 +128,6 @@ function draw() {
         let r = capture.pixels[index + 0];
         let g = capture.pixels[index + 1];
         let b = capture.pixels[index + 2];
-
         let bright = (r + g + b) / 3;
         let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
         text(chars[charIndex], x, y);
@@ -163,7 +156,6 @@ function initCamera(videoConstraints) {
   capture = createCapture(constraints, () => {
     capturing = true;
     console.log("Camera initialized:", constraints);
-    // Mirroring will be handled in draw()
   });
   capture.hide();
 }
@@ -173,10 +165,8 @@ function initCamera(videoConstraints) {
  **************************************/
 function switchCamera() {
   frontCam = !frontCam;
-
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
-
   let constraints = {
     facingMode: frontCam ? "user" : { exact: "environment" },
     aspectRatio: aspect
@@ -191,16 +181,16 @@ function takeSnapshot() {
   let snapshotDataURL = canvas.toDataURL('image/png');
   let img = document.getElementById('snapshotImg');
   img.src = snapshotDataURL;
-  document.getElementById('mediaManagementOverlay').style.display = 'block';
+  // Instead of setting inline style, add the "showOverlay" class
+  document.getElementById('mediaManagementOverlay').classList.add('showOverlay');
 }
 
 function deletePhoto() {
-  document.getElementById('mediaManagementOverlay').style.display = 'none';
+  document.getElementById('mediaManagementOverlay').classList.remove('showOverlay');
 }
 
 function savePhoto() {
   let link = document.createElement('a');
-  // Generate a unique filename using a timestamp.
   let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
   link.download = uniqueName;
   link.href = canvas.toDataURL('image/png');
@@ -226,13 +216,16 @@ function sharePhoto() {
 }
 
 /**************************************
- *  ASCII Controls Overlay
+ *  Toggle Overlays
  **************************************/
 function toggleASCIIControl() {
-  let overlay = document.getElementById('asciiControlsOverlay');
-  overlay.style.display = (overlay.style.display === 'none' || overlay.style.display === '')
-    ? 'block'
-    : 'none';
+  const overlay = document.getElementById('asciiControlsOverlay');
+  overlay.classList.toggle('showOverlay');
+}
+
+function toggleMediaManagementOverlay() {
+  const overlay = document.getElementById('mediaManagementOverlay');
+  overlay.classList.toggle('showOverlay');
 }
 
 /**************************************
@@ -240,11 +233,8 @@ function toggleASCIIControl() {
  **************************************/
 function handleAspectRatioChange() {
   let select = document.getElementById('aspectRatioSelect');
-  currentAspectRatio = select.value; // e.g. "16:9", "1:1", or "4:5"
-  // Save the selected aspect ratio so it's remembered.
+  currentAspectRatio = select.value;
   localStorage.setItem('currentAspectRatio', currentAspectRatio);
-  
-  // Reinitialize the camera with the new aspect ratio constraint.
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
   let constraints = {
@@ -255,37 +245,37 @@ function handleAspectRatioChange() {
 }
 
 /**************************************
- *  pixelSize with Carets + Range
+ *  Pixel Size Controls
  **************************************/
 function adjustPixelSize(delta) {
   let slider = document.getElementById('pixelSizeRange');
   let val = parseInt(slider.value) + delta;
-  val = constrain(val, 1, 32); // updated range limit
+  val = constrain(val, 1, 32);
   slider.value = val;
   updatePixelSize(val);
 }
 
 function updatePixelSize(newVal) {
   let val = parseInt(newVal);
-  val = constrain(val, 1, 32); // updated range limit
+  val = constrain(val, 1, 32);
   params.pixelSize = val;
   document.getElementById('pixelSizeValue').textContent = val;
 }
 
 /**************************************
- *  textSize with Carets + Range
+ *  Text Size Controls
  **************************************/
 function adjustTextSize(delta) {
   let slider = document.getElementById('textSizeRange');
   let val = parseInt(slider.value) + delta;
-  val = constrain(val, 1, 32); // updated range limit
+  val = constrain(val, 1, 32);
   slider.value = val;
   updateTextSize(val);
 }
 
 function updateTextSize(newVal) {
   let val = parseInt(newVal);
-  val = constrain(val, 1, 32); // updated range limit
+  val = constrain(val, 1, 32);
   params.textSize = val;
   document.getElementById('textSizeValue').textContent = val;
 }
@@ -319,11 +309,11 @@ function handleCustomCharacters() {
  **************************************/
 function handleTextStyleChange() {
   let styleSelect = document.getElementById('textStyleSelect');
-  params.textStyle = styleSelect.value; 
+  params.textStyle = styleSelect.value;
 }
 
 /**************************************
- *  Text/Background Color
+ *  Color Controls
  **************************************/
 function handleTextColorChange() {
   let colorInput = document.getElementById('textColorInput');
