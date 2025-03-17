@@ -17,7 +17,7 @@ let frontCam = false; // to toggle front/back
 // Retrieve stored aspect ratio or default to "16:9"
 let currentAspectRatio = localStorage.getItem('currentAspectRatio') || "16:9";
 
-// Global variables to hold the crop region for saving
+// Global variables to hold the preview (cropped) region
 let previewX = 0, previewY = 0, previewWidth = 0, previewHeight = 0;
 
 function setup() {
@@ -47,71 +47,109 @@ function setup() {
 function draw() {
   background(params.background);
   if (!capturing) return;
+
+  let videoW = capture.elt.videoWidth;
+  let videoH = capture.elt.videoHeight;
+  if (videoW === 0 || videoH === 0) return;
+  
+  // Determine if a vertical preview is desired.
+  // Only use vertical preview on mobile in portrait mode.
+  let verticalPreview = false;
+  if (windowWidth < windowHeight && (currentAspectRatio === "16:9" || currentAspectRatio === "4:5")) {
+    verticalPreview = true;
+  }
+  
+  // Compute the desired aspect ratio (width/height) from the selection
+  let [arW, arH] = currentAspectRatio.split(':');
+  let aspect = parseFloat(arW) / parseFloat(arH);
+  
+  // For 16:9 on mobile portrait, invert the ratio to display as vertical.
+  if (currentAspectRatio === "16:9" && verticalPreview) {
+    aspect = 1 / aspect; // becomes 9:16 (≈0.5625)
+  }
+  
+  // Determine available drawing dimensions.
+  let availW, availH;
+  if (verticalPreview) {
+    // On mobile portrait, swap dimensions so that the preview fills the screen
+    availW = windowHeight;
+    availH = windowWidth;
+  } else {
+    availW = windowWidth;
+    availH = windowHeight;
+  }
+  
+  // Calculate container dimensions that "cover" the available area while maintaining the aspect ratio.
+  let containerWidth = availW;
+  let containerHeight = availW / aspect;
+  if (containerHeight > availH) {
+    containerHeight = availH;
+    containerWidth = availH * aspect;
+  }
+  
+  // Determine scale factor for drawing the video feed.
+  let scaleFactor = max(containerWidth / videoW, containerHeight / videoH);
+  let drawWidth = videoW * scaleFactor;
+  let drawHeight = videoH * scaleFactor;
+  let offsetX = (containerWidth - drawWidth) / 2;
+  let offsetY = (containerHeight - drawHeight) / 2;
+  
+  // Center the container inside the available area.
+  let drawX = (availW - containerWidth) / 2;
+  let drawY = (availH - containerHeight) / 2;
+  
+  // Save these values for cropping when saving the image.
+  previewX = drawX;
+  previewY = drawY;
+  previewWidth = containerWidth;
+  previewHeight = containerHeight;
+  
+  push();
+  // Only rotate on mobile portrait if vertical preview is desired.
+  if (verticalPreview) {
+    translate(windowWidth, 0);
+    rotate(PI / 2);
+  }
+  
+  // Translate to position the container.
+  translate(drawX, drawY);
+  // Translate inside the container for proper centering of the video feed.
+  translate(offsetX, offsetY);
+  scale(scaleFactor);
+  
+  // Mirror the drawn image if using the front camera.
+  if (frontCam) {
+    scale(-1, 1);
+    translate(-videoW, 0);
+  }
   
   capture.loadPixels();
   if (capture.pixels.length > 0) {
-    // Draw the full-screen ASCII conversion.
-    // We scale the original camera feed to cover the entire canvas.
-    let videoW = capture.elt.videoWidth;
-    let videoH = capture.elt.videoHeight;
-    
-    // Compute scaling factors to cover the canvas
-    let scaleFactorX = width / videoW;
-    let scaleFactorY = height / videoH;
-    let scaleFactor = max(scaleFactorX, scaleFactorY);
-    
-    // Compute offsets to center the video drawing in the canvas (pre-scaling)
-    let offsetX = (width / scaleFactor - videoW) / 2;
-    let offsetY = (height / scaleFactor - videoH) / 2;
-    
-    push();
-      scale(scaleFactor);
-      translate(offsetX, offsetY);
-      
-      // Set text style (note: textSize will be scaled too)
-      textSize(params.textSize);
-      textStyle(params.textStyle);
-      fill(params.colour);
-      textAlign(LEFT, TOP);
-      
-      let chars = params.characters.split('');
-      for (let y = 0; y < videoH; y += params.pixelSize) {
-        for (let x = 0; x < videoW; x += params.pixelSize) {
-          let index = (x + y * videoW) * 4;
-          let r = capture.pixels[index + 0];
-          let g = capture.pixels[index + 1];
-          let b = capture.pixels[index + 2];
-          let bright = (r + g + b) / 3;
-          let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
-          text(chars[charIndex], x, y);
-        }
+    // Apply text style
+    if (params.textStyle === 'BOLD') {
+      textStyle(BOLD);
+    } else if (params.textStyle === 'ITALIC') {
+      textStyle(ITALIC);
+    } else {
+      textStyle(NORMAL);
+    }
+    fill(params.colour);
+    textSize(params.textSize);
+
+    let chars = params.characters.split('');
+    for (let y = 0; y < videoH; y += params.pixelSize) {
+      for (let x = 0; x < videoW; x += params.pixelSize) {
+        let index = (x + y * videoW) * 4;
+        let r = capture.pixels[index + 0];
+        let g = capture.pixels[index + 1];
+        let b = capture.pixels[index + 2];
+        let bright = (r + g + b) / 3;
+        let charIndex = floor(map(bright, 0, 255, chars.length - 1, 0));
+        text(chars[charIndex], x, y);
       }
-    pop();
+    }
   }
-  
-  // --- Compute the crop region for saving ---
-  // We want the saved image to have the selected aspect ratio.
-  let [arW, arH] = currentAspectRatio.split(':');
-  let desiredAspect = parseFloat(arW) / parseFloat(arH);
-  let canvasAspect = width / height;
-  let cropX, cropY, cropWidth, cropHeight;
-  if (canvasAspect > desiredAspect) {
-    // Canvas is wider than desired: use full height.
-    cropHeight = height;
-    cropWidth = height * desiredAspect;
-    cropX = (width - cropWidth) / 2;
-    cropY = 0;
-  } else {
-    // Canvas is taller than desired: use full width.
-    cropWidth = width;
-    cropHeight = width / desiredAspect;
-    cropX = 0;
-    cropY = (height - cropHeight) / 2;
-  }
-  previewX = cropX;
-  previewY = cropY;
-  previewWidth = cropWidth;
-  previewHeight = cropHeight;
+  pop();
 }
 
 function windowResized() {
@@ -129,6 +167,7 @@ function initCamera(videoConstraints) {
     video: videoConstraints,
     audio: false
   };
+  
   capture = createCapture(constraints, () => {
     capturing = true;
     console.log("Camera initialized:", constraints);
@@ -154,9 +193,11 @@ function switchCamera() {
  *  Snapshot + Media Management
  **************************************/
 function takeSnapshot() {
+  // Capture the current canvas as a snapshot
   let snapshotDataURL = canvas.toDataURL('image/png');
   let img = document.getElementById('snapshotImg');
   img.src = snapshotDataURL;
+  // Show the media management overlay using a class toggle
   document.getElementById('mediaManagementOverlay').classList.add('showOverlay');
 }
 
@@ -164,11 +205,10 @@ function deletePhoto() {
   document.getElementById('mediaManagementOverlay').classList.remove('showOverlay');
 }
 
-// savePhoto() crops the canvas to the computed region.
-// Multiplying by pixelDensity() ensures proper cropping on high-density displays.
 function savePhoto() {
-  let d = pixelDensity();
-  let cropped = get(previewX * d, previewY * d, previewWidth * d, previewHeight * d);
+  // Crop the canvas to the preview region (the drawn video feed)
+  // On desktop, since verticalPreview is false, this will use the full available dimension.
+  let cropped = get(previewX, previewY, previewWidth, previewHeight);
   let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
   save(cropped, uniqueName);
 }
@@ -203,6 +243,23 @@ function toggleMediaManagementOverlay() {
   const overlay = document.getElementById('mediaManagementOverlay');
   overlay.classList.toggle('showOverlay');
 }
+
+/**************************************
+ *  Close Overlay When Clicking Outside Modal
+ **************************************/
+// For ASCII Controls overlay
+document.getElementById('asciiControlsOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('showOverlay');
+  }
+});
+
+// For Media Management overlay
+document.getElementById('mediaManagementOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('showOverlay');
+  }
+});
 
 /**************************************
  *  Aspect Ratio
