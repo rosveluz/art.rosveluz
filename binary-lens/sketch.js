@@ -52,13 +52,16 @@ function draw() {
   let videoH = capture.elt.videoHeight;
   if (videoW === 0 || videoH === 0) return;
   
-  // Do not apply any rotation for any aspect ratio.
-  // Both 16:9 and 4:5 will be treated the same: the available width and height are those of the window.
+  // Ensure that if the aspect ratio is 4:5, we force no CSS rotation on the video element.
+  if (currentAspectRatio === "4:5") {
+    capture.elt.style.transform = "rotate(0deg)";
+  }
+  
+  // Use the available window dimensions as-is.
   let availW = windowWidth;
   let availH = windowHeight;
   
   // Compute the desired aspect ratio from the selection.
-  // For example, "16:9" gives 16/9 and "4:5" gives 4/5.
   let [arW, arH] = currentAspectRatio.split(':');
   let aspect = parseFloat(arW) / parseFloat(arH);
   
