@@ -229,6 +229,23 @@ function toggleMediaManagementOverlay() {
 }
 
 /**************************************
+ *  Close Overlay When Clicking Outside Modal
+ **************************************/
+// For ASCII Controls overlay
+document.getElementById('asciiControlsOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('showOverlay');
+  }
+});
+
+// For Media Management overlay
+document.getElementById('mediaManagementOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('showOverlay');
+  }
+});
+
+/**************************************
  *  Aspect Ratio
  **************************************/
 function handleAspectRatioChange() {
