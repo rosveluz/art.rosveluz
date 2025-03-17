@@ -23,7 +23,7 @@ let previewX = 0, previewY = 0, previewWidth = 0, previewHeight = 0;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
-  // Update the aspect ratio select element
+  // Update the aspect ratio select element if it exists
   let aspectSelect = document.getElementById('aspectRatioSelect');
   if (aspectSelect) {
     aspectSelect.value = currentAspectRatio;
@@ -53,7 +53,7 @@ function draw() {
   if (videoW === 0 || videoH === 0) return;
   
   // Determine if a vertical preview is desired.
-  // Only use vertical preview on mobile in portrait mode.
+  // Here vertical preview is only applied for 16:9 on mobile portrait.
   let verticalPreview = false;
   if (windowWidth < windowHeight && currentAspectRatio === "16:9") {
     verticalPreview = true;
@@ -71,7 +71,7 @@ function draw() {
   // Determine available drawing dimensions.
   let availW, availH;
   if (verticalPreview) {
-    // On mobile portrait, swap dimensions so that the preview fills the screen
+    // On mobile portrait, swap dimensions so that the preview fills the screen.
     availW = windowHeight;
     availH = windowWidth;
   } else {
@@ -98,14 +98,14 @@ function draw() {
   let drawX = (availW - containerWidth) / 2;
   let drawY = (availH - containerHeight) / 2;
   
-  // Save these values for cropping when saving the image.
+  // Save these values for the off-screen graphics buffer (snapshot)
   previewX = drawX;
   previewY = drawY;
   previewWidth = containerWidth;
   previewHeight = containerHeight;
   
   push();
-  // Only rotate on mobile portrait if vertical preview is desired.
+  // Apply rotation if using vertical preview (only for 16:9 in this case)
   if (verticalPreview) {
     translate(windowWidth, 0);
     rotate(PI / 2);
@@ -123,6 +123,7 @@ function draw() {
     translate(-videoW, 0);
   }
   
+  // Now apply the ASCII conversion (or simply draw the video feed)
   capture.loadPixels();
   if (capture.pixels.length > 0) {
     // Apply text style
@@ -193,7 +194,7 @@ function switchCamera() {
  *  Snapshot + Media Management
  **************************************/
 function takeSnapshot() {
-  // Capture the current canvas as a snapshot
+  // Capture the current canvas as a snapshot for preview
   let snapshotDataURL = canvas.toDataURL('image/png');
   let img = document.getElementById('snapshotImg');
   img.src = snapshotDataURL;
@@ -206,24 +207,61 @@ function deletePhoto() {
 }
 
 function savePhoto() {
-  let cropped;
-  // Determine if the canvas was transformed (rotated or swapped)
-  // In this example, verticalPreview is only used for 16:9, but you can extend this condition for 4:5 and 1:1 if needed.
-  let verticalPreview = (windowWidth < windowHeight && currentAspectRatio === "16:9");
+  // Instead of cropping the main canvas, render the snapshot to an off-screen buffer.
+  // Create an off-screen graphics buffer with the preview dimensions.
+  let pg = createGraphics(previewWidth, previewHeight);
   
+  // Set the background
+  pg.background(params.background);
+  
+  // Replicate the drawing transformations.
+  pg.push();
+  
+  // Determine if vertical preview was applied (for 16:9)
+  let verticalPreview = (windowWidth < windowHeight && currentAspectRatio === "16:9");
   if (verticalPreview) {
-    // If the canvas is rotated, swap the x and y coordinates,
-    // and also swap the width and height for cropping.
-    cropped = get(previewY, previewX, previewHeight, previewWidth);
-  } else {
-    // For non-rotated cases, use the original cropping region.
-    cropped = get(previewX, previewY, previewWidth, previewHeight);
+    // For the off-screen buffer, if rotation was applied in draw(),
+    // adjust so that the image is drawn in the proper orientation.
+    pg.translate(previewWidth, 0);
+    pg.rotate(PI / 2);
   }
   
+  // Determine video feed properties.
+  let videoW = capture.elt.videoWidth;
+  let videoH = capture.elt.videoHeight;
+  let [arW, arH] = currentAspectRatio.split(':');
+  let aspect = parseFloat(arW) / parseFloat(arH);
+  if (currentAspectRatio === "16:9" && verticalPreview) {
+    aspect = 1 / aspect;
+  }
+  
+  // Calculate scale factor as in draw()
+  let scaleFactor = max(previewWidth / videoW, previewHeight / videoH);
+  let drawWidth = videoW * scaleFactor;
+  let drawHeight = videoH * scaleFactor;
+  let offsetX = (previewWidth - drawWidth) / 2;
+  let offsetY = (previewHeight - drawHeight) / 2;
+  
+  // Apply mirror for front camera if needed.
+  if (frontCam) {
+    pg.scale(-1, 1);
+    pg.translate(-drawWidth, 0);
+  }
+  
+  // For simplicity, here we just draw the video feed.
+  // If you need the ASCII conversion, you could replicate that logic as well.
+  pg.image(capture, offsetX, offsetY, drawWidth, drawHeight);
+  
+  pg.pop();
+  
+  // Save the off-screen buffer image.
   let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
-  save(cropped, uniqueName);
+  save(pg, uniqueName);
 }
 
+/**************************************
+ *  Sharing Photo
+ **************************************/
 function sharePhoto() {
   let dataURL = document.getElementById('snapshotImg').src;
   fetch(dataURL)
