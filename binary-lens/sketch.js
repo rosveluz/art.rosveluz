@@ -206,9 +206,20 @@ function deletePhoto() {
 }
 
 function savePhoto() {
-  // Crop the canvas to the preview region (the drawn video feed)
-  // On desktop, since verticalPreview is false, this will use the full available dimension.
-  let cropped = get(previewX, previewY, previewWidth, previewHeight);
+  let cropped;
+  // Determine if the canvas was transformed (rotated or swapped)
+  // In this example, verticalPreview is only used for 16:9, but you can extend this condition for 4:5 and 1:1 if needed.
+  let verticalPreview = (windowWidth < windowHeight && currentAspectRatio === "16:9");
+  
+  if (verticalPreview) {
+    // If the canvas is rotated, swap the x and y coordinates,
+    // and also swap the width and height for cropping.
+    cropped = get(previewY, previewX, previewHeight, previewWidth);
+  } else {
+    // For non-rotated cases, use the original cropping region.
+    cropped = get(previewX, previewY, previewWidth, previewHeight);
+  }
+  
   let uniqueName = 'binaryLens-' + new Date().getTime() + '.png';
   save(cropped, uniqueName);
 }
