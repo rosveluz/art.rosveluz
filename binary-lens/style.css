@@ -3,7 +3,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
@@ -164,12 +164,19 @@ html, body {
 
 /* Firefox slider thumb */
 .rangeContainer input[type="range"]::-moz-range-thumb {
-  width: 40px;
-  height: 40px;
+  width: 240px;
+  height: 80px;
   background: #fff;
   border-radius: 50%;
   border: 2px solid #666;
   cursor: pointer;
+}
+
+input[type="color"] {
+  width: 50px; /* Set a fixed width */
+  height: 50px; /* Set a fixed height */
+  padding: 0; /* Remove extra padding */
+  border-radius: 4px; /* Prevent extreme roundness */
 }
 
 /* Color inputs */
