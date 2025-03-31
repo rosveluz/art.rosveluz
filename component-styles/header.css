@@ -1,0 +1,64 @@
+#header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#header > header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0; /* No horizontal padding here — handled by #homeWrapper */
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: block;
+}
+
+nav {
+  position: absolute;
+  top: 120px;
+  left: 50%;                          /* ✅ Center horizontally */
+  transform: translateX(-50%);        /* ✅ Compensate for 50% left */
+  width: 100%;
+  max-width: clamp(320px, 84vw, 720px); /* ✅ Match #homeWrapper width */
+  padding: 20px;
+  border-radius: 12px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+nav a {
+  font-size: 1.2rem;
+  line-height: 2.3rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #444;
+  border-bottom: 2px solid #444;
+}
+
+nav a:last-child {
+  border-bottom: none;
+}
+
+
+.hidden {
+  display: none;
+}
+.visible {
+  display: flex;
+}

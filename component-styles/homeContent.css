@@ -1,0 +1,99 @@
+#homeContent {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: 36px;
+  }
+  
+  
+  /* Carousel wrapper is pinned at the bottom */
+  .carousel-wrapper {
+    width: 100%;
+    height: 240px;
+    padding: 24px clamp(16px, 4vw, 24px);
+    background: white;
+    margin-top: 40px;
+    border-radius: 16px;
+    /* box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15); */
+  }
+  
+  /* Slide content */
+  
+  .carousel-slide {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    height: 100%;           /* ✅ important! fill parent height */
+  }
+
+  .carousel-slide h2 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  .carousel-slide p {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+    line-height: 1.5;
+    color: #444;
+    margin: 0;
+  }
+
+  .link-button {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 2px solid #000;
+    border-radius: 9999px;
+    background: transparent;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #000;
+    transition: all 0.2s ease;
+    width: auto;
+    max-width: fit-content;
+    white-space: nowrap;
+    margin-top: auto; /* ✅ push to bottom of flex column */
+  }
+  
+  
+  .link-button:hover {
+    background: #000;
+    color: #fff;
+  }
+  
+  /* Carousel navigation */
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;       /* ✅ no background */
+    border: none;           /* ✅ no border */
+    box-shadow: none;       /* ✅ no shadow */
+    padding: 0;             /* ✅ no space around */
+    font-size: 24px;        /* Keep this for icon size */
+    cursor: pointer;
+    z-index: 2;
+    color: white;         /* or any color you want */
+    opacity: 0.6;         /* make it less harsh */
+    font-weight: bold;
+    transition: opacity 0.2s ease;
+  }
+  
+  
+  .carousel-nav.left {
+    left: clamp(8px, 2vw, 16px);
+  }
+  .carousel-nav.right {
+    right: clamp(8px, 2vw, 16px);
+  }
+  
+
+  
+
+
+  

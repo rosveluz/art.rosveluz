@@ -1,0 +1,89 @@
+/* 1. Box-sizing reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+html, body {
+  font-family: "Inter Tight", sans-serif;
+  line-height: 1.5;
+  background-color: rgb(0, 0, 0);
+}
+
+body, a {
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter Tight", sans-serif;
+  font-weight: 400;
+  margin: 10px 0;
+}
+
+/* 3. Improve media & text rendering */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/* 4. Root stacking */
+#root, #__next {
+  isolation: isolate;
+}
+
+/* 5. Global layout container */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+}
+
+/* 6. Main wrapper — handles width & horizontal padding */
+#homeWrapper {
+  width: 100%;
+  max-width: clamp(320px, 92vw, 720px);
+  padding: 0 clamp(16px, 4vw, 24px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* take up available space */
+}
+
+
+#imageContainer {
+  background-color: #000; /* fallback */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  transition: background-image 0.4s ease-in-out;
+  transition: background-image 0.6s ease-in-out, opacity 0.4s ease;
+}
+
+
+#carouselSlide {
+  touch-action: pan-y;
+}
