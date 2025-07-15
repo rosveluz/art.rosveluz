@@ -9,11 +9,12 @@ export function loadHeader() {
 
         <!-- Navigation Menu -->
         <nav id="navMenu" class="hidden">
-            <a href="">New Media</a>
+            <a href="">Non/Media</a>
             <a href="">Drawings</a>
             <a href="">Objects</a>
             <a href="">Instruments</a>
             <a href="/Contact">Contact</a>
+            <a href="www.rosveluz.com">Contact</a>
         </nav>
       </header>
     `;

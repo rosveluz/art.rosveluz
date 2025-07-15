@@ -16,21 +16,21 @@ export function loadHomeContent() {
   // Define slides
   const slides = [
     {
-      title: "Artwork 1",
+      title: "Non/Media and Experiences",
       text: "Ros Veluz is an experienced web designer, artist, and musician. His creative expression is deeply informed by cultural iconography, psychology, and  music.",
       link: "https://www.art.rosveluz.com",
       image: "img/delicate.jpg",
       buttonText: "Artist's Portfolio"
     },
     {
-      title: "Artwork 2",
+      title: "Drawings",
       text: "The design portfolio blends form, function, and cultural resonance.",
       link: "https://rosveluz-webdesign.myportfolio.com/",
       image: "img/bambooGuitar.png",
       buttonText: "Design Portfolio"
     },
     {
-      title: "Artwork 3",
+      title: "Instruments",
       text: "Limited-edition merchandise that reflects Veluz's personal aesthetic.",
       link: "https://facebook.com/modern.junk.and.artifacts",
       image: "img/moriPins.png",
