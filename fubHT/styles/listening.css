@@ -1,0 +1,13 @@
+.listening {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+.listening audio {
+  width: 100%;
+  margin: 12px 0;
+}
+.listening .info {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
