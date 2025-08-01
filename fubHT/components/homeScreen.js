@@ -37,7 +37,7 @@ export default class HomeScreen {
               <h2>${slide.header}</h2>
               <p>${slide.text}</p>
             </div>
-          `).join('')}
+          `).join('')}  
           <button class="carousel-btn prev">&#9664;</button>
           <button class="carousel-btn next">&#9654;</button>
         </div>
@@ -47,13 +47,28 @@ export default class HomeScreen {
       </div>
     `;
 
-    // Start button listeners
+    // Start Session listeners with motion permission
     this.slides.forEach((_, i) => {
-      this.container.querySelector(`#startBtn-${i}`)
-        .addEventListener('click', () => this.onNext('session'));
+      const btn = this.container.querySelector(`#startBtn-${i}`);
+      btn.addEventListener('click', async () => {
+        // Request motion permission on iOS Safari
+        if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
+          try {
+            const state = await DeviceMotionEvent.requestPermission();
+            if (state !== 'granted') {
+              alert('Motion access is required for step counting. Please enable Motion & Orientation Access in your browser settings.');
+              return;
+            }
+          } catch (err) {
+            console.error('Motion permission error:', err);
+            alert('Unable to obtain motion permission; step counting may not work.');
+          }
+        }
+        this.onNext('session');
+      });
     });
 
-    // Carousel nav
+    // Carousel navigation
     this.container.querySelector('.prev')
       .addEventListener('click', () => this._prevSlide());
     this.container.querySelector('.next')
