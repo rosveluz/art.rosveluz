@@ -8,16 +8,33 @@
   height: 100%;
   background: rgba(0,0,0,0.5);
 }
+.modal.open {
+  display: block;
+}
 .modal-content {
-  background: #fff;
+  background: #ffffff;
   margin: 20% auto;
   padding: 20px;
   width: 80%;
   max-width: 400px;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-body {
+  margin-top: 12px;
+  font-family: Arial, sans-serif;
+  color: #333;
 }
 .modal-close {
-  float: right;
-  font-size: 1.5rem;
+  background: none;
+  border: none;
   cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.modal-close img {
+  width: 24px;
+  height: 24px;
 }

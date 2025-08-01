@@ -25,22 +25,30 @@ function handleNext(screenName) {
   }
 }
 
+// Show InfoModal with custom HTML content
 function showInfo() {
   if (!modal) {
-    modal = new InfoModal(document.body, { onClose: () => modal.hide() });
+    modal = new InfoModal(document.body, {
+      onClose: () => modal.hide(),
+      content: `
+        <h3>About Oro-Plata-Mata</h3>
+        <p>“Oro, Plata, Mata” counts steps in threes. Ending on “Mata” (death) is avoided.</p>
+        <p>This superstition guides the design to end on “Oro” or “Plata,” not “Mata.”</p>
+      `
+    });
   }
   modal.show();
 }
 
 function attachHeaderListeners() {
-  const infoBtn = document.getElementById('infoBtn');
-  const closeBtn = document.getElementById('closeBtn');
-  if (infoBtn) infoBtn.addEventListener('click', showInfo);
-  if (closeBtn) closeBtn.addEventListener('click', () => modal && modal.hide());
-}
+  // Home button: navigate to HomeScreen
+  const homeBtn = document.getElementById('homeBtn');
+  if (homeBtn) homeBtn.addEventListener('click', () => goTo(HomeScreen));
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js');
+  const infoBtn = document.getElementById('infoBtn');
+  if (infoBtn) infoBtn.addEventListener('click', showInfo);
+  const closeBtn = document.getElementById('closeBtn');
+  if (closeBtn) closeBtn.addEventListener('click', () => modal && modal.hide());
 }
 
 goTo(HomeScreen);

@@ -1,8 +1,14 @@
+/* Reset default browser margins to avoid extra scroll */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 .global-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 4px;
+  padding: 12px 16px;
   background-color: #fff;
   /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
   position: sticky;
@@ -10,7 +16,9 @@
   z-index: 10;
 }
 .global-header .logo {
-  height: 48px;
+  height: 40px;
+  cursor: pointer;
+  outline: none;
 }
 .header-icons {
   display: flex;
@@ -21,8 +29,9 @@
   border: none;
   padding: 4px;
   cursor: pointer;
+  outline: none;
 }
 .header-btn img {
-  height: 32px;
-  width: 32px;
+  height: 24px;
+  width: 24px;
 }

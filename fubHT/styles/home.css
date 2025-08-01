@@ -1,18 +1,130 @@
 .home {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  justify-content: flex-start;
+  /* Instead of height: 100vh; */
+  min-height: 100vh;       /* Only ensure it’s at least full-height */
+  /* Or remove it altogether to let content dictate height */
   font-family: Arial, sans-serif;
+  padding: 16px;
+  box-sizing: border-box;
 }
-.home button {
-  margin: 8px;
+/* Carousel container */
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.carousel-slide {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  padding: 0;
+  background: #fff;
+}
+
+.carousel-slide.active {
+  display: flex;
+}
+
+/* Image container for each slide */
+.slide-image {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  background-color: #ccc;
+  border-radius: 8px 8px 0 0;
+}
+
+.slide-image .slide-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* Start button overlay on image */
+.start-btn {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff6600;
+  color: #fff;
+  border: none;
   padding: 12px 24px;
   font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 2;
 }
-.home .info {
-  position: absolute;
-  top: 16px;
+
+/* Navigation arrows */
+.carousel-btn {
+  position: fixed;
+  bottom: 24px; /* stick arrows at 24px from bottom */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+  padding: 4px;
+  outline: none;
+}
+.carousel-btn.prev {
+  left: 16px;
+}
+.carousel-btn.next {
   right: 16px;
+}
+
+.carousel-btn.prev {
+  left: 16px;
+}
+
+.carousel-btn.next {
+  right: 16px;
+}
+
+/* Dots */
+.carousel-dots {
+  position: fixed;
+  bottom: 24px; /* stick dots at 24px from bottom */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10;
+}
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+}
+.carousel-dot.active {
+  background: #333;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+}
+
+.carousel-dot.active {
+  background: #333;
 }

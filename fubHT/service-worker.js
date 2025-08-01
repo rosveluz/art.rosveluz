@@ -5,7 +5,7 @@ const ASSETS = [
   '/main.js',
   '/manifest.json',
   '/service-worker.js',
-  '/img/rvz-blk.svg',
+  '/img/logo.svg',
   '/img/info.svg',
   '/img/close.svg',
   '/components/homeScreen.js',
