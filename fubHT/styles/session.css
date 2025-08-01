@@ -7,11 +7,19 @@
 .camera-container {
   width: 100%;
   max-width: 360px;
-  height: 260px;
+  height: 260px;               /* updated to match your local design */
   background-color: #ccc;
   border-radius: 8px;
   position: relative;
   margin: 0 auto;
+  overflow: hidden;            /* ensure stream/image respects border-radius */
+}
+
+.camera-stream {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .camera-toolbar {
@@ -45,11 +53,4 @@
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-}
-
-.camera-stream {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
 }
