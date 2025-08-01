@@ -1,4 +1,6 @@
 export default class SessionScreen {
+  /** Define expected QR token for session completion */
+  static EXPECTED_QR = 'f4635424-0be9-4656-be82-0d3320bd57b9';
   /**
    * @param {HTMLElement} container
    * @param {Object} options.onNext - callback to navigate to ListeningScreen
@@ -50,6 +52,9 @@ export default class SessionScreen {
     `;
     this.walkAnimEl = this.container.querySelector('#walkAnim');
     this.stepEl = this.container.querySelector('#stepCount');
+    // Setup offscreen canvas for QR scanning
+    this.qrCanvas = document.createElement('canvas');
+    this.qrCtx = this.qrCanvas.getContext('2d');
     this._attachListeners();
   }
 
@@ -71,6 +76,7 @@ export default class SessionScreen {
         camIcon.src = 'img/cameraON.svg';
         completeBtn.disabled = false;
         this.walkAnimEl.playAnimation();
+        this._startQRScanner(videoEl);
         this._startStepSensor();
       } catch (err) {
         console.error('Camera error:', err);
@@ -87,6 +93,7 @@ export default class SessionScreen {
       completeBtn.disabled = true;
       this.walkAnimEl.pauseAnimation();
       this._stopStepSensor();
+        this._stopQRScanner();
     };
 
     toggleBtn.addEventListener('click', () => {
@@ -102,7 +109,7 @@ export default class SessionScreen {
       switchIcon.classList.toggle('flipped');
     });
 
-    completeBtn.addEventListener('click', () => this.onNext('listening', { steps: this.steps }));
+    // Manual completion removed; completion via scanning correct QR code
   }
 
   _startStepSensor() {
