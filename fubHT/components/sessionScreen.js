@@ -24,7 +24,7 @@ export default class SessionScreen {
         <!-- Walking Animation -->
         <dotlottie-wc id="walkAnim" class="walk-animation"
           src="https://lottie.host/0e8da522-2562-43b6-8659-43deb7777812/B7Vx5Dz8SI.lottie"
-          speed="1"></dotlottie-wc>
+          speed="1" autoplay loop></dotlottie-wc>
 
         <!-- Camera Viewfinder -->
         <div class="camera-container">
@@ -70,7 +70,7 @@ export default class SessionScreen {
         this.camOn = true;
         camIcon.src = 'img/cameraON.svg';
         completeBtn.disabled = false;
-        // start step sensor & animation
+        this.walkAnimEl.playAnimation();
         this._startStepSensor();
       } catch (err) {
         console.error('Camera error:', err);
@@ -85,7 +85,7 @@ export default class SessionScreen {
       this.camOn = false;
       camIcon.src = 'img/cameraOFF.svg';
       completeBtn.disabled = true;
-      this.walkAnimEl.pause();
+      this.walkAnimEl.pauseAnimation();
       this._stopStepSensor();
     };
 
@@ -106,7 +106,6 @@ export default class SessionScreen {
   }
 
   _startStepSensor() {
-    // request permission on iOS Safari
     if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
       DeviceMotionEvent.requestPermission()
         .then(state => {
@@ -120,14 +119,14 @@ export default class SessionScreen {
 
   _initStepSensor() {
     if ('Accelerometer' in window) {
-      this.sensor = new Accelerometer({ frequency: 20 });
-      this.sensor.addEventListener('reading', () => this._processMotion(
-        this.sensor.x, this.sensor.y, this.sensor.z
-      ));
+      this.sensor = new Accelerometer({ frequency: 10 });
+      this.sensor.addEventListener('reading', () =>
+        this._processMotion(this.sensor.x, this.sensor.y, this.sensor.z)
+      );
       this.sensor.start();
     } else if ('DeviceMotionEvent' in window) {
-      this._motionHandler = e => {
-        const a = e.acceleration;
+      this._motionHandler = event => {
+        const a = event.acceleration;
         if (a) this._processMotion(a.x, a.y, a.z);
       };
       window.addEventListener('devicemotion', this._motionHandler);
@@ -156,9 +155,9 @@ export default class SessionScreen {
       this.steps++;
       this.lastStepTime = now;
       if (this.stepEl) this.stepEl.textContent = `Steps: ${this.steps}`;
-      this.walkAnimEl.play();
+      this.walkAnimEl.playAnimation();
       clearTimeout(this.walkTimeout);
-      this.walkTimeout = setTimeout(() => this.walkAnimEl.pause(), 800);
+      this.walkTimeout = setTimeout(() => this.walkAnimEl.pauseAnimation(), 800);
     }
     this.lastMag = mag;
   }
