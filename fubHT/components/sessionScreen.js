@@ -11,6 +11,7 @@ export default class SessionScreen {
     this.stream = null;
     this.steps = 0;
     this.sensor = null;
+    this._motionHandler = null;
     this.lastMag = 0;
     this.lastStepTime = 0;
     this.walkTimeout = null;
@@ -47,7 +48,6 @@ export default class SessionScreen {
         <button id="completeBtn" class="complete-btn" disabled>COMPLETE</button>
       </div>
     `;
-    // grab references
     this.walkAnimEl = this.container.querySelector('#walkAnim');
     this.stepEl = this.container.querySelector('#stepCount');
     this._attachListeners();
@@ -70,8 +70,7 @@ export default class SessionScreen {
         this.camOn = true;
         camIcon.src = 'img/cameraON.svg';
         completeBtn.disabled = false;
-        // Start walking animation and step sensor
-        this.walkAnimEl.playAnimation();
+        // start step sensor & animation
         this._startStepSensor();
       } catch (err) {
         console.error('Camera error:', err);
@@ -86,7 +85,7 @@ export default class SessionScreen {
       this.camOn = false;
       camIcon.src = 'img/cameraOFF.svg';
       completeBtn.disabled = true;
-      this.walkAnimEl.pauseAnimation();
+      this.walkAnimEl.pause();
       this._stopStepSensor();
     };
 
@@ -107,9 +106,21 @@ export default class SessionScreen {
   }
 
   _startStepSensor() {
-    // Use Accelerometer API if available, otherwise fallback to devicemotion
+    // request permission on iOS Safari
+    if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
+      DeviceMotionEvent.requestPermission()
+        .then(state => {
+          if (state === 'granted') this._initStepSensor();
+        })
+        .catch(console.error);
+    } else {
+      this._initStepSensor();
+    }
+  }
+
+  _initStepSensor() {
     if ('Accelerometer' in window) {
-      this.sensor = new Accelerometer({ frequency: 10 });
+      this.sensor = new Accelerometer({ frequency: 20 });
       this.sensor.addEventListener('reading', () => this._processMotion(
         this.sensor.x, this.sensor.y, this.sensor.z
       ));
@@ -120,6 +131,8 @@ export default class SessionScreen {
         if (a) this._processMotion(a.x, a.y, a.z);
       };
       window.addEventListener('devicemotion', this._motionHandler);
+    } else {
+      console.warn('No motion sensor available');
     }
   }
 
@@ -136,19 +149,16 @@ export default class SessionScreen {
   }
 
   _processMotion(x, y, z) {
-    const mag = Math.sqrt((x||0)*(x||0) + (y||0)*(y||0) + (z||0)*(z||0));
+    const mag = Math.sqrt((x||0)**2 + (y||0)**2 + (z||0)**2);
     const now = Date.now();
     const diff = mag - this.lastMag;
-    // threshold tuned for mobile walking
     if (diff > 1.2 && (now - this.lastStepTime) > 400) {
       this.steps++;
       this.lastStepTime = now;
-      // update counter
       if (this.stepEl) this.stepEl.textContent = `Steps: ${this.steps}`;
-      // animate walking
-      this.walkAnimEl.playAnimation();
+      this.walkAnimEl.play();
       clearTimeout(this.walkTimeout);
-      this.walkTimeout = setTimeout(() => this.walkAnimEl.pauseAnimation(), 800);
+      this.walkTimeout = setTimeout(() => this.walkAnimEl.pause(), 800);
     }
     this.lastMag = mag;
   }
