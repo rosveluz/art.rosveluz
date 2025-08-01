@@ -24,9 +24,19 @@
 
 .camera-toolbar {
   display: flex;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between; /* align counter and buttons */
+  align-items: center;
   margin-top: 12px;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.step-count {
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .toolbar-btn {
