@@ -37,7 +37,7 @@ export default class HomeScreen {
               <h2>${slide.header}</h2>
               <p>${slide.text}</p>
             </div>
-          `).join('')}  
+          `).join('')}
           <button class="carousel-btn prev">&#9664;</button>
           <button class="carousel-btn next">&#9654;</button>
         </div>
