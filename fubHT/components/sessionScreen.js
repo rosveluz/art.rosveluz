@@ -23,14 +23,14 @@ export default class SessionScreen {
         <!-- Walking Animation -->
         <dotlottie-wc id="walkAnim" class="walk-animation"
           src="https://lottie.host/0e8da522-2562-43b6-8659-43deb7777812/B7Vx5Dz8SI.lottie"
-          speed="1" autoplay loop></dotlottie-wc>
+          speed="1"></dotlottie-wc>
 
         <!-- Camera Viewfinder -->
         <div class="camera-container">
           <video id="cameraStream" class="camera-stream" autoplay playsinline muted></video>
         </div>
 
-        <!-- Camera Controls -->
+        <!-- Camera Controls + Step Count -->
         <div class="camera-toolbar">
           <div id="stepCount" class="step-count">Steps: 0</div>
           <div class="toolbar-buttons">
@@ -47,7 +47,9 @@ export default class SessionScreen {
         <button id="completeBtn" class="complete-btn" disabled>COMPLETE</button>
       </div>
     `;
+    // grab references
     this.walkAnimEl = this.container.querySelector('#walkAnim');
+    this.stepEl = this.container.querySelector('#stepCount');
     this._attachListeners();
   }
 
@@ -68,7 +70,8 @@ export default class SessionScreen {
         this.camOn = true;
         camIcon.src = 'img/cameraON.svg';
         completeBtn.disabled = false;
-        this.walkAnimEl.play();
+        // Start walking animation and step sensor
+        this.walkAnimEl.playAnimation();
         this._startStepSensor();
       } catch (err) {
         console.error('Camera error:', err);
@@ -83,7 +86,7 @@ export default class SessionScreen {
       this.camOn = false;
       camIcon.src = 'img/cameraOFF.svg';
       completeBtn.disabled = true;
-      this.walkAnimEl.pause();
+      this.walkAnimEl.pauseAnimation();
       this._stopStepSensor();
     };
 
@@ -104,26 +107,20 @@ export default class SessionScreen {
   }
 
   _startStepSensor() {
-    if (!('Accelerometer' in window)) return;
-    this.sensor = new Accelerometer({ frequency: 10 });
-    this.sensor.addEventListener('reading', () => {
-      const x = this.sensor.x, y = this.sensor.y, z = this.sensor.z;
-      const mag = Math.sqrt(x * x + y * y + z * z);
-      const now = Date.now();
-      const diff = mag - this.lastMag;
-      if (diff > 12 && (now - this.lastStepTime) > 500) {
-        this.steps++;
-        // Update the visible step count
-        const stepEl = this.container.querySelector('#stepCount');
-        if (stepEl) stepEl.textContent = `Steps: ${this.steps}`;
-        this.lastStepTime = now;
-        this.walkAnimEl.play();
-        clearTimeout(this.walkTimeout);
-        this.walkTimeout = setTimeout(() => this.walkAnimEl.pause(), 1000);
-      }
-      this.lastMag = mag;
-    });
-    this.sensor.start();
+    // Use Accelerometer API if available, otherwise fallback to devicemotion
+    if ('Accelerometer' in window) {
+      this.sensor = new Accelerometer({ frequency: 10 });
+      this.sensor.addEventListener('reading', () => this._processMotion(
+        this.sensor.x, this.sensor.y, this.sensor.z
+      ));
+      this.sensor.start();
+    } else if ('DeviceMotionEvent' in window) {
+      this._motionHandler = e => {
+        const a = e.acceleration;
+        if (a) this._processMotion(a.x, a.y, a.z);
+      };
+      window.addEventListener('devicemotion', this._motionHandler);
+    }
   }
 
   _stopStepSensor() {
@@ -131,6 +128,28 @@ export default class SessionScreen {
       this.sensor.stop();
       this.sensor = null;
     }
+    if (this._motionHandler) {
+      window.removeEventListener('devicemotion', this._motionHandler);
+      this._motionHandler = null;
+    }
     clearTimeout(this.walkTimeout);
+  }
+
+  _processMotion(x, y, z) {
+    const mag = Math.sqrt((x||0)*(x||0) + (y||0)*(y||0) + (z||0)*(z||0));
+    const now = Date.now();
+    const diff = mag - this.lastMag;
+    // threshold tuned for mobile walking
+    if (diff > 1.2 && (now - this.lastStepTime) > 400) {
+      this.steps++;
+      this.lastStepTime = now;
+      // update counter
+      if (this.stepEl) this.stepEl.textContent = `Steps: ${this.steps}`;
+      // animate walking
+      this.walkAnimEl.playAnimation();
+      clearTimeout(this.walkTimeout);
+      this.walkTimeout = setTimeout(() => this.walkAnimEl.pauseAnimation(), 800);
+    }
+    this.lastMag = mag;
   }
 }
