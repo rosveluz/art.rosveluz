@@ -1,103 +1,70 @@
 export default class HomeScreen {
+  /**
+   * @param {HTMLElement} container
+   * @param {Object} options.onNext - callback to navigate to the listening screen
+   */
   constructor(container, { onNext }) {
     this.container = container;
     this.onNext = onNext;
-    this.currentSlide = 0;
-    this.slides = [
-      {
-        header: 'Welcome to FUB Historical Timeline Audio Tour',
-        text: 'Press “Start Session,” and the app will track your steps to select a themed audio tour based on your step count.',
-        image: 'img/fub-1.png'
-      },
-      {
-        header: 'Scan the QR code to Complete the session',
-        text: 'At the end of this Historical Timeline display, scanning the QR code will enable the completion of the session.',
-        image: 'img/fub-2.png'
-      },
-      {
-        header: 'Listen and enjoy the audio tour',
-        text: 'The audio narration will play automatically as you move through the timeline—just walk at your own pace and enjoy the tour.',
-        image: 'img/fub-3.png'
-      }
-    ];
     this._render();
-    this._showSlide(this.currentSlide);
   }
 
   _render() {
     this.container.innerHTML = `
       <div class="home">
-        <div class="carousel">
-          ${this.slides.map((slide, i) => `
-            <div class="carousel-slide" data-index="${i}">
-              <div class="slide-image">
-                <img src="${slide.image}" alt="${slide.header}" class="slide-img" />
-                <button id="startBtn-${i}" class="start-btn">START SESSION</button>
-              </div>
-              <h2>${slide.header}</h2>
-              <p>${slide.text}</p>
-            </div>
-          `).join('')}  
-          <button class="carousel-btn prev">&#9664;</button>
-          <button class="carousel-btn next">&#9654;</button>
+        <h1>Welcome to enCounter: FUB Historical Timeline Audio Tour</h1>
+        <p>
+          The webapp is a creative exercise in storytelling, and for this iteration,
+          we have First United Building as our subject. Fill out the form below to begin your journey.
+        </p>
+        <div class="dob-form">
+          <label for="dob">Select a start date:</label>
+          <input type="date" id="dob" max="2025-08-09" />
         </div>
-        <div class="carousel-dots">
-          ${this.slides.map((_, i) => `<div class="carousel-dot" data-index="${i}"></div>`).join('')}
-        </div>
+        <button id="startBtn" class="start-btn">START</button>
       </div>
     `;
 
-    // Start Session listeners with motion permission
-    this.slides.forEach((_, i) => {
-      const btn = this.container.querySelector(`#startBtn-${i}`);
-      btn.addEventListener('click', async () => {
-        // Request motion permission on iOS Safari
-        if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
-          try {
-            const state = await DeviceMotionEvent.requestPermission();
-            if (state !== 'granted') {
-              alert('Motion access is required for step counting. Please enable Motion & Orientation Access in your browser settings.');
-              return;
-            }
-          } catch (err) {
-            console.error('Motion permission error:', err);
-            alert('Unable to obtain motion permission; step counting may not work.');
-          }
-        }
-        this.onNext('session');
+    const startBtn = this.container.querySelector('#startBtn');
+    // Initialize a date picker with manual input support (requires flatpickr)
+    if (window.flatpickr) {
+      flatpickr(this.container.querySelector('#dob'), {
+        dateFormat: 'Y-m-d',
+        maxDate: '2025-08-09',
+        allowInput: true
+      });
+    }
+
+    startBtn.addEventListener('click', () => {
+      const dobValue = this.container.querySelector('#dob').value;
+      if (!dobValue) {
+        alert('Please select a valid date to continue.');
+        return;
+      }
+
+      // Calculate days between DOB and target date
+      const dob = new Date(dobValue);
+      const target = new Date('2025-08-09');
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const days = Math.floor((target - dob) / msPerDay);
+
+      // Randomize average steps per day for uniqueness
+      const minDaily = 3000;
+      const maxDaily = 7000;
+      const avgStepsPerDay = Math.floor(
+        Math.random() * (maxDaily - minDaily + 1)
+      ) + minDaily;
+      const totalSteps = days * avgStepsPerDay;
+
+      // Determine oro/plata/mata based on step count sequence
+      const mod = totalSteps % 3;
+      const result = mod === 1 ? 'oro' : mod === 2 ? 'plata' : 'mata';
+
+      this.onNext('listening', {
+        result,
+        totalSteps,
+        avgStepsPerDay
       });
     });
-
-    // Carousel navigation
-    this.container.querySelector('.prev')
-      .addEventListener('click', () => this._prevSlide());
-    this.container.querySelector('.next')
-      .addEventListener('click', () => this._nextSlide());
-    this.container.querySelectorAll('.carousel-dot').forEach(dot => {
-      dot.addEventListener('click', e => {
-        const idx = parseInt(e.target.getAttribute('data-index'), 10);
-        this._showSlide(idx);
-      });
-    });
-  }
-
-  _showSlide(index) {
-    const slides = this.container.querySelectorAll('.carousel-slide');
-    const dots = this.container.querySelectorAll('.carousel-dot');
-    slides.forEach(s => s.classList.remove('active'));
-    dots.forEach(d => d.classList.remove('active'));
-    slides[index].classList.add('active');
-    dots[index].classList.add('active');
-    this.currentSlide = index;
-  }
-
-  _prevSlide() {
-    const newIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
-    this._showSlide(newIndex);
-  }
-
-  _nextSlide() {
-    const newIndex = (this.currentSlide + 1) % this.slides.length;
-    this._showSlide(newIndex);
   }
 }

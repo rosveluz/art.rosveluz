@@ -1,13 +1,85 @@
-.listening {
+.listening-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 16px;
   font-family: Arial, sans-serif;
 }
-.listening audio {
+
+.listening-header {
   width: 100%;
-  margin: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.listening .info {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+.logo {
+  height: 40px;
+}
+.header-icons {
+  display: flex;
+  gap: 8px;
+}
+.header-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.count-circle {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.count-circle span {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.listening-title {
+  margin: 8px 0;
+  font-size: 1.125rem;
+  text-align: center;
+}
+
+.transcript-box {
+  width: 100%;
+  max-width: 360px;
+  height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.audio-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  gap: 16px;
+}
+.control-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  color: red;
+}
+.control-btn img {
+  width: 32px;
+  height: 32px;
+}
+.control-btn .icon {
+  width: 32px;
+  height: 32px;
+  fill: currentColor; /* ensures the SVG path uses the button’s color */
 }

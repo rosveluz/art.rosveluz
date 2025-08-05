@@ -1,54 +1,48 @@
 import HomeScreen from './components/homeScreen.js';
-import SessionScreen from './components/sessionScreen.js';
 import ListeningScreen from './components/listeningScreen.js';
 import InfoModal from './components/infoModal.js';
 
+const screens = {
+  home: HomeScreen,
+  listening: ListeningScreen
+};
+
 const app = document.getElementById('app');
-let modal;
+let current = null;
 
-function goTo(Screen) {
+export function goTo(screen, options = {}) {
+  if (current && typeof current.cleanup === 'function') {
+    current.cleanup();
+  }
   app.innerHTML = '';
-  new Screen(app, { onNext: handleNext });
-  attachHeaderListeners();
+  const ScreenClass = screens[screen];
+  current = new ScreenClass(app, {
+    ...options,
+    onNext: goTo,
+    onInfo: showInfoModal
+  });
 }
 
-function handleNext(screenName) {
-  switch (screenName) {
-    case 'session':
-      goTo(SessionScreen);
-      break;
-    case 'listening':
-      goTo(ListeningScreen);
-      break;
-    default:
-      goTo(HomeScreen);
+let infoModal = null;
+function showInfoModal() {
+  if (infoModal) return;
+  infoModal = new InfoModal(document.body, {
+    onClose: () => { infoModal.hide(); infoModal = null; }
+  });
+  infoModal.show();
+}
+
+// Wire up global header buttons once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const headerLogo = document.getElementById('homeBtn');
+  if (headerLogo) {
+    headerLogo.addEventListener('click', () => goTo('home'));
   }
-}
-
-// Show InfoModal with custom HTML content
-function showInfo() {
-  if (!modal) {
-    modal = new InfoModal(document.body, {
-      onClose: () => modal.hide(),
-      content: `
-        <h3>About Oro-Plata-Mata</h3>
-        <p>“Oro, Plata, Mata” counts steps in threes. Ending on “Mata” (death) is avoided.</p>
-        <p>This superstition guides the design to end on “Oro” or “Plata,” not “Mata.”</p>
-      `
-    });
+  const headerInfoBtn = document.getElementById('infoBtn');
+  if (headerInfoBtn) {
+    headerInfoBtn.addEventListener('click', showInfoModal);
   }
-  modal.show();
-}
+});
 
-function attachHeaderListeners() {
-  // Home button: navigate to HomeScreen
-  const homeBtn = document.getElementById('homeBtn');
-  if (homeBtn) homeBtn.addEventListener('click', () => goTo(HomeScreen));
-
-  const infoBtn = document.getElementById('infoBtn');
-  if (infoBtn) infoBtn.addEventListener('click', showInfo);
-  const closeBtn = document.getElementById('closeBtn');
-  if (closeBtn) closeBtn.addEventListener('click', () => modal && modal.hide());
-}
-
-goTo(HomeScreen);
+// Start at home screen
+goTo('home');
