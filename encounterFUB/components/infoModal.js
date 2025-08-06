@@ -9,7 +9,10 @@ export default class InfoModal {
     this.parent = parent;
     this.onClose = onClose;
     this.content = content ||
-      `<p>“Oro, Plata, Mata” counts steps in threes. Ending on “Mata” (death) is avoided.</p>`;
+      `<p>Inspired by the Filipino-Spanish superstition “Oro, Plata, Mata” (Gold, Silver, Death), this is a narration of the history of the First United Building by triggering a themed audio tour based on the user’s algorhitmically derived step count, guiding them through a narrative shaped by the value they draw.
+      <br><br>
+      Credits and Sources:<br>
+      <b></b></p>`;
     this._createElements();
   }
 

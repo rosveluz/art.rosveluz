@@ -25,9 +25,13 @@ export function goTo(screen, options = {}) {
 
 let infoModal = null;
 function showInfoModal() {
-  if (infoModal) return;
+  // Always recreate the modal on each click
+  if (infoModal) {
+    infoModal.hide();
+    infoModal = null;
+  }
   infoModal = new InfoModal(document.body, {
-    onClose: () => { infoModal.hide(); infoModal = null; }
+    onClose: () => { infoModal = null; }
   });
   infoModal.show();
 }
