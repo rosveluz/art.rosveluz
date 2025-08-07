@@ -1,7 +1,11 @@
 .home {
   padding: 24px;
-  font-family: Arial, sans-serif;
-  text-align: center;
+  font-family: Montserrat, Inter, sans-serif;
+  text-align: left;
+}
+
+h1 {
+  font-size: 1.4rem;
 }
 
 .dob-form {
@@ -23,6 +27,8 @@
 }
 
 .start-btn {
+  display: block;       /* make it a block so margins apply */
+  margin: 0 auto;       /* center the block within its parent */
   padding: 12px 24px;
   font-size: 1rem;
   background-color: #ff6600;
@@ -30,6 +36,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  /* you can remove text-align here */
 }
 
 .start-btn:hover {

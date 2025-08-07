@@ -12,10 +12,13 @@ export default class HomeScreen {
   _render() {
     this.container.innerHTML = `
       <div class="home">
-        <h1>Welcome to enCounter: FUB Historical Timeline Audio Tour</h1>
+        <h1>_enCounter: FUB Historical Timeline Audio Tour</h1>
         <p>
-          The webapp is a creative exercise in storytelling, and for this iteration,
-          we have First United Building as our subject. Fill out the form below to begin your journey.
+          Inspired by the Filipino-Spanish superstition “<i>Oro, Plata, Mata</i>” (Gold, Silver, Death), the history of First United Building is narrated by a themed audio tour based on the user's algorhitmically derived number of steps.
+          <br><br>
+          Enter your birthdate, or any date of your choice, and the webapp will come-up with the number of steps you must have taken from input date until August 9, 2025.
+          <br><br>
+          Listen to the audio composition. Using an Earphones/Headphones is recommended.
         </p>
         <div class="dob-form">
           <label for="dob">Select a start date:</label>
