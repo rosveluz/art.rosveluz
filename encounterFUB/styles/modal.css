@@ -25,6 +25,9 @@
   margin-top: 12px;
   font-family: Arial, sans-serif;
   color: #333;
+  max-height: 320px;
+  overflow-y: auto;              /* scroll vertically when content exceeds 320px */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 .modal-close {
   background: none;
