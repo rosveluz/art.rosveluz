@@ -4,6 +4,9 @@
   align-items: center;
   padding: 16px;
   font-family: Arial, sans-serif;
+  background: var(--theme-bg, #fff);
+  color: var(--theme-fg, #111);
+  min-height: calc(100vh - 0px); /* let it fill the viewport area */
 }
 
 .count-circle {
@@ -87,14 +90,20 @@
   gap: 10px;
 }
 
+/* after */
 .control-btn {
   background: none;
   border: none;
   cursor: pointer;
   outline: none;
-  color: #333; /* icon color */
+  color: inherit;       /* <- inherits var(--theme-fg), off-white on mata */
   padding: 4px;
 }
+
+.count-circle {
+  border: 2px solid currentColor; /* <- adapts to dark/light themes */
+}
+
 
 .control-btn .icon {
   width: 28px;
@@ -125,6 +134,27 @@
   border-radius: 50%;
   background: #ff6600;
   cursor: pointer;
+}
+
+/* Result illustration */
+.result-illustration {
+  width: 100%;
+  max-width: 360px;
+  min-height: 180px;            /* space for the symbol */
+  background: transparent;       /* screen itself has the theme bg */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.result-symbol {
+  width: 100%;
+  height: auto;
+  max-width: var(--symbol-max, 140px);
+  user-select: none;
+  pointer-events: none;
 }
 
 /* bigger than before */

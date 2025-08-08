@@ -16,8 +16,16 @@ export default class ListeningScreen {
   }
 
   _render() {
+    // Theme map for background + symbol size
+    const themes = {
+      oro:   { bg: '#D2A709', fg: '#111111', symbol: 'assets/oro-symbol.svg',   max: '120px', label: 'Oro (Gold)' },
+      plata: { bg: '#BEC0C6', fg: '#111111', symbol: 'assets/plata-symbol.svg', max: '180px', label: 'Plata (Silver)' },
+      mata:  { bg: '#1F2B2E', fg: '#EAF2F4', symbol: 'assets/mata-symbol.svg',  max: '180px', label: 'Mata (Death)' }
+    };
+    const theme = themes[this.result] || themes.oro;
+
     this.container.innerHTML = `
-      <div class="listening-screen">
+      <div class="listening-screen" style="--theme-bg: ${theme.bg}; --theme-fg: ${theme.fg}; --symbol-max: ${theme.max};">
         <div class="count-circle">
           <span>${this.totalSteps}</span>
         </div>
@@ -49,14 +57,14 @@ export default class ListeningScreen {
         <!-- Controls -->
         <div class="audio-controls">
           <input
-          type="range"
-          id="volumeSlider"
-          class="volume-slider"
-          min="0"
-          max="1"
-          step="0.01"
-          value="1"
-          aria-label="Volume"
+            type="range"
+            id="volumeSlider"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            aria-label="Volume"
           />
           <button id="back10Btn" class="control-btn" aria-label="Back 10 seconds">
             <svg class="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 5v2.05A7 7 0 1 1 5.05 13H3a9 9 0 1 0 9-9z"/><path d="M5 11h6l-3-3v6z"/></svg>
@@ -77,6 +85,11 @@ export default class ListeningScreen {
           </button>
           <!-- Volume Slider -->
 
+        </div>
+
+        <!-- Result Illustration -->
+        <div class="result-illustration">
+          <img src="${theme.symbol}" alt="${theme.label} symbol" class="result-symbol" />
         </div>
 
         <audio id="resultAudio" src="assets/${this.result}.mp3" preload="auto"></audio>
@@ -144,6 +157,24 @@ export default class ListeningScreen {
 
     // Load transcript text
     this._loadTranscript();
+
+    // Also paint the page background + tag theme class + swap logo on mata
+if (document && document.body) {
+  this._prevBodyBg = document.body.style.backgroundColor;
+  document.body.style.backgroundColor = theme.bg;
+
+  // tag the body so header/css can react
+  document.body.classList.remove('theme-oro','theme-plata','theme-mata');
+  document.body.classList.add(`theme-${this.result}`);
+
+  // swap header logo to white on mata, restore on cleanup
+  const logoEl = document.getElementById('homeBtn'); // <img id="homeBtn" ...>
+  if (logoEl) {
+    this._prevLogoSrc = logoEl.getAttribute('src');
+    logoEl.setAttribute('src', this.result === 'mata' ? 'img/rvz-wht.svg' : 'img/rvz-blk.svg');
+  }
+}
+
   }
 
   _togglePlay() {
@@ -200,4 +231,16 @@ export default class ListeningScreen {
       this.container.querySelector('#transcriptBox').textContent = 'Transcript unavailable.';
     }
   }
+
+  cleanup() {
+  if (document && document.body) {
+    document.body.style.backgroundColor = this._prevBodyBg || '';
+    document.body.classList.remove('theme-oro','theme-plata','theme-mata');
+  }
+  const logoEl = document.getElementById('homeBtn');
+  if (logoEl && this._prevLogoSrc) {
+    logoEl.setAttribute('src', this._prevLogoSrc);
+  }
+}
+
 }

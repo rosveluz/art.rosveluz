@@ -35,3 +35,29 @@ html, body {
   height: 24px;
   width: 24px;
 }
+
+/* Default header icon look stays as-is */
+.global-header .header-btn img {
+  transition: filter .2s ease;
+}
+
+/* On dark (mata), flip icons to off-white */
+body.theme-mata .global-header .header-btn img {
+  filter: invert(1) brightness(1.15) contrast(0.95);
+}
+
+/* If your header has any text, ensure it’s readable on mata */
+body.theme-mata .global-header {
+  color: #EAF2F4;
+}
+
+/* Header background follows the active theme */
+body.theme-oro   .global-header { background-color: #D2A709; }
+body.theme-plata .global-header { background-color: #BEC0C6; }
+body.theme-mata  .global-header { background-color: #1F2B2E; }
+
+/* On dark (mata), make header icons off-white */
+body.theme-mata .global-header .header-btn img {
+  filter: invert(1) brightness(1.12) contrast(0.95);
+}
+
