@@ -48,15 +48,15 @@ export default class ListeningScreen {
 
         <!-- Controls -->
         <div class="audio-controls">
-                    <input
-            type="range"
-            id="volumeSlider"
-            class="volume-slider"
-            min="0"
-            max="1"
-            step="0.01"
-            value="1"
-            aria-label="Volume"
+          <input
+          type="range"
+          id="volumeSlider"
+          class="volume-slider"
+          min="0"
+          max="1"
+          step="0.01"
+          value="1"
+          aria-label="Volume"
           />
           <button id="back10Btn" class="control-btn" aria-label="Back 10 seconds">
             <svg class="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 5v2.05A7 7 0 1 1 5.05 13H3a9 9 0 1 0 9-9z"/><path d="M5 11h6l-3-3v6z"/></svg>
