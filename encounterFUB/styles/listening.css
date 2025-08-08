@@ -6,26 +6,6 @@
   font-family: Arial, sans-serif;
 }
 
-.listening-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.logo {
-  height: 40px;
-}
-.header-icons {
-  display: flex;
-  gap: 8px;
-}
-.header-btn {
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
-}
-
 .count-circle {
   width: 80px;
   height: 80px;
@@ -43,7 +23,7 @@
 }
 
 .listening-title {
-  margin: 8px 0;
+  margin: 8px 0 12px;
   font-size: 1.125rem;
   text-align: center;
 }
@@ -51,7 +31,7 @@
 .transcript-box {
   width: 100%;
   max-width: 360px;
-  height: 360px;
+  height: 200px;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 8px;
@@ -59,27 +39,96 @@
   margin-bottom: 16px;
 }
 
+/* Progress / Scrubber row */
+.progress-row {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.time {
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: center;
+}
+.seek-slider {
+  flex: 1;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+  outline: none;
+}
+.seek-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+}
+.seek-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+}
+
+/* Controls row */
 .audio-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 360px;
-  gap: 16px;
+  gap: 10px;
 }
+
 .control-btn {
   background: none;
   border: none;
   cursor: pointer;
   outline: none;
-  color: red;
+  color: #333; /* icon color */
+  padding: 4px;
 }
-.control-btn img {
-  width: 32px;
-  height: 32px;
-}
+
 .control-btn .icon {
-  width: 32px;
-  height: 32px;
-  fill: currentColor; /* ensures the SVG path uses the button’s color */
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
 }
+
+/* Volume slider */
+.volume-slider {
+  flex: 1;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+  outline: none;
+}
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+}
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+}
+
+/* bigger than before */
+.volume-slider { flex: 2; }
+
+/* smaller than before */
+.volume-slider { flex: 0.6; min-width: 100px; }
