@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/component-styles/header.css" />
+</head>
+<body>
+  <div class="main-container" id="imageContainer">
+    <div id="homeWrapper">
+      <div id="header"></div>
+      <a href="/" style="display:inline-block;margin:16px 0;">← Home</a>
+      <h1 id="itemTitle"></h1>
+      <p id="itemMeta" class="muted"></p>
+      <div id="hero" style="margin:12px 0;border-radius:12px;overflow:hidden"></div>
+      <article id="content"></article>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadHeader } from '/components/header.js';
+    import '/components/item-page.js';
+    loadHeader();
+  </script>
+</body>
+</html>

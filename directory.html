@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Directory</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/component-styles/header.css" />
+  <link rel="stylesheet" href="/component-styles/homeContent.css" />
+</head>
+<body>
+  <div class="main-container" id="imageContainer">
+    <div id="homeWrapper">
+      <div id="header"></div>
+      <main id="app"></main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadHeader } from '/components/header.js';
+    import '/components/directory-page.js';
+    loadHeader();
+  </script>
+</body>
+</html>

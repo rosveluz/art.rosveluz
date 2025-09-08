@@ -1,0 +1,116 @@
+{
+  "categories": [
+    {
+      "slug": "nonMedia",
+      "title": "Non/Media and Experiences",
+      "bg": "/img/delicate.jpg",
+      "cover": "/img/delicate.jpg"
+    },
+    {
+      "slug": "drawings",
+      "title": "Drawings",
+      "bg": "/img/bambooGuitar.png",
+      "cover": "/img/bambooGuitar.png"
+    },
+    {
+      "slug": "crafts",
+      "title": "Instruments/Crafts",
+      "bg": "/img/moriPins.png",
+      "cover": "/img/moriPins.png"
+    }
+  ],
+  "items": [
+    {
+      "slug": "binary-lens",
+      "title": "Binary Lens",
+      "category": "nonMedia",
+      "summary": "Live camera → ASCII art",
+      "date": "2025-07-18",
+      "tags": ["Web", "Canvas"],
+      "thumb": "/img/delicate.jpg",
+      "hero": "/img/delicate.jpg",
+      "md": "/content/nonMedia/binary-lens.md",
+      "standalone": "/binary-lens/"
+    },
+    {
+      "slug": "encounter-fub",
+      "title": "Encounter FUB (Oro, Plata, Mata)",
+      "category": "nonMedia",
+      "summary": "Step-based audio tour",
+      "date": "2025-08-10",
+      "tags": ["Audio", "PWA"],
+      "thumb": "/img/moriPins.png",
+      "hero": "/img/moriPins.png",
+      "md": "/content/nonMedia/encounterFUB.md",
+      "standalone": "/encounterFUB/"
+    },
+
+    {
+      "slug": "old-drawings",
+      "title": "Old Drawings",
+      "category": "drawings",
+      "summary": "Archival sketches",
+      "date": "2022-05-01",
+      "tags": ["Pencil"],
+      "thumb": "/img/delicate.jpg",
+      "hero": "/img/delicate.jpg",
+      "md": "/content/drawings/old-drawings.md"
+    },
+    {
+      "slug": "patterns-tessellations",
+      "title": "Patterns & Tessellations",
+      "category": "drawings",
+      "summary": "Geometric series",
+      "date": "2023-06-12",
+      "tags": ["Pattern"],
+      "thumb": "/img/moriPins.png",
+      "hero": "/img/moriPins.png",
+      "md": "/content/drawings/patterns-tessellations.md"
+    },
+
+    {
+      "slug": "coconut-djembe-2024",
+      "title": "Coconut Djembe 2024",
+      "category": "crafts",
+      "summary": "Found-material drum",
+      "date": "2024-04-10",
+      "tags": ["Build"],
+      "thumb": "/img/bambooGuitar.png",
+      "hero": "/img/bambooGuitar.png",
+      "md": "/content/crafts/coconut-djembe-2024.md"
+    },
+    {
+      "slug": "coconut-djembe-2025",
+      "title": "Coconut Djembe 2025",
+      "category": "crafts",
+      "summary": "Refined build",
+      "date": "2025-02-18",
+      "tags": ["Build"],
+      "thumb": "/img/bambooGuitar.png",
+      "hero": "/img/bambooGuitar.png",
+      "md": "/content/crafts/coconut-djembe-2025.md"
+    },
+    {
+      "slug": "bamboo-guitar-5",
+      "title": "Bamboo Guitar 5",
+      "category": "crafts",
+      "summary": "Latest iteration",
+      "date": "2025-03-20",
+      "tags": ["Instrument"],
+      "thumb": "/img/bambooGuitar.png",
+      "hero": "/img/bambooGuitar.png",
+      "md": "/content/crafts/bamboo-guitar-5.md"
+    },
+    {
+      "slug": "bamboo-guitar-2-3-4",
+      "title": "Bamboo Guitar 2, 3 & 4",
+      "category": "crafts",
+      "summary": "Earlier builds",
+      "date": "2024-09-15",
+      "tags": ["Instrument"],
+      "thumb": "/img/bambooGuitar.png",
+      "hero": "/img/bambooGuitar.png",
+      "md": "/content/crafts/bamboo-guitar-2-3-4.md"
+    }
+  ]
+}

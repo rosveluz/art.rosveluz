@@ -13,7 +13,7 @@ export function loadHeader() {
             <a href="">Drawings</a>
             <a href="">Objects</a>
             <a href="">Instruments</a>
-            <a href="/Contact">Contact</a>
+            <a href="#">Words</a>
             <a href="www.rosveluz.com">Contact</a>
         </nav>
       </header>

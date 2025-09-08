@@ -17,26 +17,27 @@ export function loadHomeContent() {
   const slides = [
     {
       title: "Non/Media and Experiences",
-      text: "Ros Veluz is an experienced web designer, artist, and musician. His creative expression is deeply informed by cultural iconography, psychology, and  music.",
-      link: "https://www.art.rosveluz.com",
+      text: "…",
+      link: "/directory.html?c=nonMedia",
       image: "img/delicate.jpg",
-      buttonText: "Artist's Portfolio"
+      buttonText: "Browse Non/Media & Experiences"
     },
     {
       title: "Drawings",
-      text: "The design portfolio blends form, function, and cultural resonance.",
-      link: "https://rosveluz-webdesign.myportfolio.com/",
+      text: "…",
+      link: "/directory.html?c=drawings",
       image: "img/bambooGuitar.png",
-      buttonText: "Design Portfolio"
+      buttonText: "Browse Drawings"
     },
     {
-      title: "Instruments",
-      text: "Limited-edition merchandise that reflects Veluz's personal aesthetic.",
-      link: "https://facebook.com/modern.junk.and.artifacts",
+      title: "Instruments and Crafts",
+      text: "…",
+      link: "/directory.html?c=crafts",
       image: "img/moriPins.png",
-      buttonText: "Modern Junk & Artifacts Shop"
+      buttonText: "Browse Instruments/Crafts"
     }
   ];
+
 
   let current = 0;
 
