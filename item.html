@@ -6,12 +6,14 @@
   <title>Project</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/component-styles/header.css" />
+  <script type="module" src="/components/itemPage.js"></script>
+
 </head>
 <body>
   <div class="main-container" id="imageContainer">
     <div id="homeWrapper">
       <div id="header"></div>
-      <a href="/" style="display:inline-block;margin:16px 0;">← Home</a>
+      <a id="backLink" href="/" style="display:inline-block;margin:16px 0; color:white; text-decoration: none;">← Back</a>
       <h1 id="itemTitle"></h1>
       <p id="itemMeta" class="muted"></p>
       <div id="hero" style="margin:12px 0;border-radius:12px;overflow:hidden"></div>

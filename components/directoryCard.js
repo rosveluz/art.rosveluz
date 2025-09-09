@@ -23,7 +23,7 @@ export function renderCards(target, items, opts = {}) {
     return `
       <article class="card ${clickWholeCard ? 'card--clickable' : ''}"
                ${clickWholeCard ? `role="link" tabindex="0" data-href="${itemUrl}" aria-labelledby="${titleId}"` : ''}
-               style="background:#111;border:1px solid #222;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;height:100%;">
+               style="background:#111; border-radius:14px;overflow:hidden;display:flex;flex-direction:column;height:100%;">
         ${i.thumb ? `
           <a class="card__imageLink" href="${itemUrl}"
              aria-hidden="${clickWholeCard ? 'true' : 'false'}"

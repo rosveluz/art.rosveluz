@@ -114,8 +114,8 @@ input, button, textarea, select { font: inherit; }
   -webkit-tap-highlight-color: rgba(255,255,255,0.08);
 }
 .card--clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.30);
+  transform: translateY();
+  box-shadow: 0 8px 24px #c3f88642;
   border-color: #333;
 }
 .card--clickable:active {
@@ -124,7 +124,7 @@ input, button, textarea, select { font: inherit; }
 }
 .card--clickable:focus { outline: none; }
 .card--clickable:focus-visible {
-  box-shadow: 0 0 0 3px rgba(124,156,255,.60), 0 8px 24px rgba(0,0,0,.30);
+  box-shadow: 0 0 0 3px hsla(133, 100%, 69%, 0.6), 0 8px 24px rgba(0,0,0,.30);
   border-color: var(--accent);
 }
 
