@@ -21,28 +21,26 @@
   ],
   "items": [
     {
-      "slug": "binary-lens",
-      "title": "Binary Lens",
-      "category": "nonMedia",
-      "summary": "Live camera → ASCII art",
-      "date": "2025-07-18",
-      "tags": ["Web", "Canvas"],
-      "thumb": "/img/delicate.jpg",
-      "hero": "/img/delicate.jpg",
-      "md": "/content/nonMedia/binary-lens.md",
-      "standalone": "/binary-lens/"
-    },
-    {
-      "slug": "encounter-fub",
+      "slug": "encounterFUB",
       "title": "Encounter FUB (Oro, Plata, Mata)",
       "category": "nonMedia",
       "summary": "Step-based audio tour",
       "date": "2025-08-10",
-      "tags": ["Audio", "PWA"],
-      "thumb": "/img/moriPins.png",
-      "hero": "/img/moriPins.png",
-      "md": "/content/nonMedia/encounterFUB.md",
-      "standalone": "/encounterFUB/"
+      "tags": ["Audio","PWA"],
+      "thumb": "/content/nonMedia/encounterFUB/thumb.png",
+      "hero":  "/content/nonMedia/encounterFUB/hero.png",  
+      "md":    "/content/nonMedia/encounterFUB/encounterFUB.md"
+    },
+    {
+      "slug": "binary-lens",
+      "title": "Binary Lens",
+      "category": "nonMedia",
+      "summary": "ASCII camera",
+      "date": "2025-08-10",
+      "tags": ["Digital Imagery","PWA"],
+      "thumb": "/content/nonMedia/binary-lens/thumb.png",
+      "hero":  "/content/nonMedia/binary-lens/hero.png", 
+      "md":    "/content/nonMedia/binary-lens/binary-lens.md"
     },
 
     {
