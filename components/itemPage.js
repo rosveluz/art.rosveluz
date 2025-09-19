@@ -46,7 +46,126 @@ function join(base, rel){
   return base.replace(/\/+$/,'') + '/' + rel.replace(/^\/+/, '');
 }
 
-/* ---------- image probe + simple scan of 01.jpg … ---------- */
+/* ---------- safety helpers ---------- */
+function escapeHTML(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function parseAttrs(s) {
+  const out = {};
+  const re = /([a-zA-Z][\w-]*)\s*=\s*"([^"]*)"|([a-zA-Z][\w-]*)/g;
+  let m;
+  while ((m = re.exec(s))) {
+    if (m[1]) out[m[1]] = m[2];
+    else if (m[3]) out[m[3]] = true;
+  }
+  return out;
+}
+
+/* ---------- Markdown shortcodes (masonry, row, figure, video, quote, caption, credits) ---------- */
+/** We transform our shortcodes into HTML before marked parses the rest.
+ *  Paths are resolved relative to the .md file folder.
+ */
+function applyShortcodes(md, mdDir){
+  let out = md;
+
+  // --- Paired blocks first ---
+  // [quote cite="..."]...[/quote] OR just [quote]...[/quote]
+  out = out.replace(/\[quote(?:\s+([^\]]+))?\]([\s\S]*?)\[\/quote\]/gi, (_, attrStr, inner) => {
+    const a = parseAttrs(attrStr || '');
+    const text = escapeHTML((inner || '').trim());
+    const cite = a.cite ? `<figcaption>— ${escapeHTML(a.cite)}</figcaption>` : '';
+    return `<figure class="md-quote"><blockquote>${text}</blockquote>${cite}</figure>`;
+  });
+
+  // [caption]...[/caption]
+  out = out.replace(/\[caption\]([\s\S]*?)\[\/caption\]/gi, (_, inner) => {
+    return `<p class="md-caption">${escapeHTML((inner || '').trim())}</p>`;
+  });
+
+  // [credits]...[/credits]
+  out = out.replace(/\[credits\]([\s\S]*?)\[\/credits\]/gi, (_, inner) => {
+    const html = escapeHTML((inner || '').trim()).replace(/\n/g, '<br>');
+    return `<aside class="md-credits">${html}</aside>`;
+  });
+
+  // --- Single/self-closing tags ---
+  out = out.replace(/\[(masonry|row|figure|video)\s+([^\]]*)\]/gi, (_, tag, attrStr) => {
+    const a = parseAttrs(attrStr || '');
+    const list = (a.imgs || a.images || '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    // Masonry
+    if (tag.toLowerCase() === 'masonry') {
+      const cols = parseInt(a.cols || a.columns || 0, 10) || 0;
+      const gap  = parseInt(a.gap || 0, 10) || 0;
+      const imgs = list.map(src =>
+        `<img loading="lazy" src="${join(mdDir, src)}" alt="">`
+      ).join('');
+      const style = gap ? ` style="--m-gap:${gap}px"` : '';
+      return `<div class="masonry"${cols?` data-cols="${cols}"`:''}${style}>${imgs}</div>`;
+    }
+
+    // Row
+    if (tag.toLowerCase() === 'row') {
+      const count = list.length || 1;
+      const gap  = parseInt(a.gap || 0, 10) || 0;
+      const imgs = list.map(src =>
+        `<img loading="lazy" src="${join(mdDir, src)}" alt="">`
+      ).join('');
+      const style = gap ? ` style="--r-gap:${gap}px"` : '';
+      return `<div class="row" data-count="${count}"${style}>${imgs}</div>`;
+    }
+
+    // Figure
+    if (tag.toLowerCase() === 'figure') {
+      const src = a.src ? join(mdDir, a.src) : '';
+      const cap = a.caption ? `<figcaption>${escapeHTML(a.caption)}</figcaption>` : '';
+      if (!src) return '';
+      return `<figure class="md-figure"><img loading="lazy" src="${src}" alt="${escapeHTML(a.alt||'')}">${cap}</figure>`;
+    }
+
+    // Video
+    if (tag.toLowerCase() === 'video') {
+      const src    = a.src ? join(mdDir, a.src) : '';
+      const poster = a.poster ? ` poster="${join(mdDir, a.poster)}"` : '';
+      if (!src) return '';
+      const flags = [
+        a.controls ? 'controls' : '',
+        a.autoplay ? 'autoplay' : '',
+        a.loop ? 'loop' : '',
+        a.muted ? 'muted' : ''
+      ].filter(Boolean).join(' ');
+      return `
+        <div class="video">
+          <video ${flags} playsinline${poster}>
+            <source src="${src}" type="video/mp4">
+          </video>
+        </div>
+      `.trim();
+    }
+
+    return '';
+  });
+
+  // Single-line quote form: [quote text="..." cite="..."]
+  out = out.replace(/\[quote\s+([^\]]*?)\]/gi, (_, attrStr) => {
+    const a = parseAttrs(attrStr || '');
+    if (!a.text) return '';
+    const cite = a.cite ? `<figcaption>— ${escapeHTML(a.cite)}</figcaption>` : '';
+    return `<figure class="md-quote"><blockquote>${escapeHTML(a.text)}</blockquote>${cite}</figure>`;
+  });
+
+  return out;
+}
+
+/* ---------- image probe + simple scan (01.jpg, GP-1.png, etc.) ---------- */
 function imageExists(url){
   return new Promise((res)=>{
     const img = new Image();
@@ -56,23 +175,20 @@ function imageExists(url){
   });
 }
 
-async function scanGallery(
-  mdDir,
-  {
+async function scanGallery(mdDir, opts = {}){
+  const {
     max = 40,
     exts = ['png','jpg','jpeg','webp'],
-    prefixes = ['', 'GP-', 'gp-', 'IMG_', 'img_', 'P', 'p'] // you can add more
-  } = {}
-){
+    prefixes = ['', 'GP-', 'gp-', 'IMG_', 'img_', 'P', 'p']
+  } = opts;
+
   const found = [];
   let misses = 0;
-
   const pad2 = (n)=>String(n).padStart(2,'0');
 
   for (let i=1; i<=max; i++){
     let hit = false;
 
-    // Try a few stems for each number: 1, 01, GP-1, GP-01, etc.
     const stems = new Set();
     stems.add(String(i));
     stems.add(pad2(i));
@@ -91,7 +207,6 @@ async function scanGallery(
     }
 
     misses = hit ? 0 : (misses + 1);
-    // stop after a few consecutive misses once we've progressed a bit
     if (!hit && i > 3 && misses >= 3) break;
   }
 
@@ -136,15 +251,16 @@ function createLightbox(){
 
   stage.addEventListener('pointerdown',(e)=>{
     stage.setPointerCapture(e.pointerId);
-    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     lastX=e.clientX; lastY=e.clientY;
-    if(pointers.size===2){ const[a,b]=[...pointers.values()];
+    if(pointers.size===2){
+      const[a,b]=[...pointers.values()];
       startDist=Math.hypot(a.x-b.x,a.y-b.y); startScale=scale;
     }
   });
   stage.addEventListener('pointermove',(e)=>{
     if(!pointers.has(e.pointerId)) return;
-    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if(pointers.size===2){
       const[a,b]=[...pointers.values()];
       const dist=Math.hypot(a.x-b.x,a.y-b.y);
@@ -224,11 +340,14 @@ function renderGallery(host, gallery, heroSrc){
     }
   }, { once:true });
 
-  const go = (n)=>{
+  const go = (n) => {
     idx = (n + slides.length) % slides.length;
-    track.style.transform = `translateX(${-idx*100}%)`;
-    dotEls.forEach((d,i)=>d.style.background = i===idx ? '#fff' : 'rgba(255,255,255,.35)');
+    track.style.transform = `translateX(${-idx * 100}%)`;
+    dotEls.forEach((d, i) => {
+      d.style.background = (i === idx) ? '#fff' : 'rgba(255,255,255,.35)';
+    });
   };
+
   go(0);
 
   prev.addEventListener('click', ()=>go(idx-1));
@@ -301,41 +420,35 @@ const back    = document.getElementById('backLink');
       });
     }
 
-    // 3) Hero/Gallery first, so visuals show even if markdown parse fails
+    // 3) Hero/Gallery first
     const mdDir = dirname(item.md);
-
     let heroSrc = item.hero || join(mdDir, 'hero.jpg');
     if (!(await imageExists(heroSrc))) heroSrc = '';
-
     const gallery = await scanGallery(mdDir);
 
     if ((heroSrc || gallery.length) && heroEl) {
       renderGallery(heroEl, gallery, heroSrc);
     } else if (item.hero && heroEl) {
-      // fallback to your original single hero
       heroEl.style.margin = '12px 0';
       heroEl.style.borderRadius = '12px';
       heroEl.style.overflow = 'hidden';
       heroEl.innerHTML = `<img src="${item.hero}" alt="${item.title}" style="width:100%;height:auto">`;
     }
 
-    // 4) Load + render Markdown (safe if Marked fails)
+    // 4) Markdown → HTML with shortcode pass
     const raw = await loadMarkdown(item.md);
     const bodyOnly = stripFrontmatter(raw);
-    const html = (marked && typeof marked.parse === 'function') ? marked.parse(bodyOnly) : bodyOnly;
+    const withShortcodes = applyShortcodes(bodyOnly, mdDir);
+    const html = (marked && typeof marked.parse === 'function') ? marked.parse(withShortcodes) : withShortcodes;
     if (content) content.innerHTML = html;
 
     // 5) Meta line
     const bits = [];
     if (item.date) bits.push(item.date);
-    // NOTE: if you later parse frontmatter keys like "role", capture it above
-    // For now we keep your existing behavior (date + tags)
-    // If you want "role" in meta, we need to parse frontmatter fully here.
-    // Keeping minimal to fix error.
     if (Array.isArray(item.tags) && item.tags.length) bits.push(item.tags.join(' • '));
     if (metaEl) metaEl.textContent = bits.join(' • ');
 
-    // 6) SEO JSON-LD (unchanged)
+    // 6) SEO JSON-LD
     injectItemJsonLd(buildCreativeWorkJsonLd(item));
   } catch (e) {
     console.error(e);

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/component-styles/header.css" />
+  <link rel="stylesheet" href="/component-styles/itemPage.css" />
+</head>
+<body>
+  <div class="main-container" id="imageContainer">
+    <div id="homeWrapper">
+      <div id="header"></div>
+
+      <h1 style="margin:16px 0 4px 0;">Contact</h1>
+      <p class="muted" style="margin:0 0 16px 0;">Let’s talk about projects, collaborations, or commissions.</p>
+
+      <section style="display:grid;gap:16px;max-width:680px;">
+        <!-- Direct email -->
+        <div style="background:#111;border:1px solid #222;border-radius:14px;padding:16px;">
+          <h2 style="margin:0 0 8px 0;">Email</h2>
+          <p style="margin:0 0 12px 0;">
+            <a href="mailto:hello@rosveluz.com" class="footerText">hello@rosveluz.com</a>
+          </p>
+        </div>
+
+        <div style="background:#111;border:1px solid #222;border-radius:14px;padding:16px;">
+          <h2 style="margin:0 0 8px 0;">Email</h2>
+          <p style="margin:0 0 12px 0;">
+            <a href="mailto:hello@rosveluz.com" class="footerText">hello@rosveluz.com</a>
+          </p>
+        </div>
+
+      </section>
+
+      <div id="footer" style="margin-top:24px;"></div>
+    </div>
+  </div>
+    <script type="module">
+        import { loadHeader } from './components/header.js';
+        import { loadHomeContent } from './components/homeContent.js'; // ✅ import your carousel module
+        import { loadFooter } from './components/footer.js';
+        
+        loadHeader();
+        loadHomeContent(); // ✅ render the carousel
+        loadFooter();
+    </script>
+
+</body>
+</html>

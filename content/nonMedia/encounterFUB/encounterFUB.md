@@ -17,6 +17,12 @@ Step-based audio tour for First United Building Museum. Non-commercial artwork.
 
 Describe the concept, context, and what the visitor experiences. You can add **headings**, lists, and images:
 
+[figure src="hero.png" caption="Installation view, 2024"]
+
+<a href="https://art.rosveluz.com/encounterFUB/" target="_blank" rel="noopener">Open standalone →</a>
+<br><br>
+[masonry imgs="GP-1.png, GP-1.png, GP-1.png, GP-1.png, GP-1.png" gap="10"]
+
 ## Process
 - Research notes…
 - Prototyping steps…
@@ -27,6 +33,5 @@ Describe the concept, context, and what the visitor experiences. You can add **h
 
 
 
-<a href="https://art.rosveluz.com/encounterFUB/" target="_blank" rel="noopener">Open standalone →</a>
 
 

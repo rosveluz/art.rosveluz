@@ -14,28 +14,7 @@ export async function loadHomeContent() {
     </div>
   `;
 
-  // 1) Fetch categories from manifest.json
-  let slides = [];
-  try {
-    const res = await fetch('/content/manifest.json', { cache: 'no-store' });
-    const manifest = await res.json();
-    const categories = Array.isArray(manifest.categories) ? manifest.categories : [];
-
-    // build slides from categories (any number supported)
-    slides = categories.map(c => ({
-      title: c.title || c.slug,
-      text:  c.description || '…',
-      link:  `/directory.html?c=${encodeURIComponent(c.slug)}`,
-      image: c.bg || c.cover || 'img/delicate.jpg',
-      buttonText: `Browse ${c.title || c.slug}`
-    }));
-  } catch (e) {
-    console.error('Failed to load manifest for slides, falling back.', e);
-  }
-
-  // 2) Fallback if fetch fails or empty
-  if (!slides.length) {
-    slides = [
+  let slides = [
       {
         title: "Non/Media and Experiences",
         text: "…",
@@ -57,10 +36,8 @@ export async function loadHomeContent() {
         image: "img/moriPins.png",
         buttonText: "Browse Instruments/Crafts"
       }
-    ];
-  }
+  ];
 
-  // 3) Carousel behavior (unchanged from your version)
   let current = 0;
 
   function updateSlide() {

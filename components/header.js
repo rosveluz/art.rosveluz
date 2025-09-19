@@ -31,8 +31,6 @@ export function loadHeader() {
 
       // Your extra links that you want visible now
       const extra = [
-        { label: 'Objects',       href: '/directory.html?c=objects', key: 'objects' },
-        { label: 'Words (blog)',  href: '/directory.html?c=words',   key: 'words'   },
         { label: 'Shop',          href: 'https://shop.rosveluz.com', key: 'shop', external: true },
         { label: 'Contact',       href: '/contact.html',             key: 'contact' }
       ];
@@ -58,7 +56,6 @@ export function loadHeader() {
       const links = [
         { label: 'Non/Media & Experiences', href: '/directory.html?c=nonMedia', key: 'nonMedia' },
         { label: 'Drawings',                href: '/directory.html?c=drawings', key: 'drawings' },
-        { label: 'Instruments/Crafts',      href: '/directory.html?c=crafts',   key: 'crafts'   },
         { label: 'Objects',       href: '/directory.html?c=objects', key: 'objects' },
         { label: 'Words (blog)',  href: '/directory.html?c=words',   key: 'words'   },
         { label: 'Shop',          href: 'https://shop.rosveluz.com', key: 'shop', external: true },
