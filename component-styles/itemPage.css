@@ -73,3 +73,7 @@ html, body {
 }
 .prose a:hover { text-decoration: underline; }
 .prose img { max-width: 100%; border-radius: 12px; }
+
+#content {
+  padding: 12px 0px 32px;
+}

@@ -1,60 +1,82 @@
-export function loadHomeContent() {
+export async function loadHomeContent() {
+  // Render the shell immediately
   document.getElementById('homeContent').innerHTML = `
     <div class="carousel-wrapper">
-      <button class="carousel-nav left">&#10094;</button>
+      <button class="carousel-nav left" aria-label="Previous slide">&#10094;</button>
 
       <div class="carousel-slide" id="carouselSlide">
-        <h2 id="carouselTitle">Artworks</h2>
-        <p id="carouselText">Veluz's creative expression is deeply informed by...</p>
-        <a href="/art.html" id="carouselLink" class="link-button">Link Button</a>
+        <h2 id="carouselTitle">Loading…</h2>
+        <p id="carouselText"></p>
+        <a href="#" id="carouselLink" class="link-button" aria-label="Open category">Open</a>
       </div>
 
-      <button class="carousel-nav right">&#10095;</button>
+      <button class="carousel-nav right" aria-label="Next slide">&#10095;</button>
     </div>
   `;
 
-  // Define slides
-  const slides = [
-    {
-      title: "Non/Media and Experiences",
-      text: "…",
-      link: "/directory.html?c=nonMedia",
-      image: "img/delicate.jpg",
-      buttonText: "Browse Non/Media & Experiences"
-    },
-    {
-      title: "Drawings",
-      text: "…",
-      link: "/directory.html?c=drawings",
-      image: "img/bambooGuitar.png",
-      buttonText: "Browse Drawings"
-    },
-    {
-      title: "Instruments and Crafts",
-      text: "…",
-      link: "/directory.html?c=crafts",
-      image: "img/moriPins.png",
-      buttonText: "Browse Instruments/Crafts"
-    }
-  ];
+  // 1) Fetch categories from manifest.json
+  let slides = [];
+  try {
+    const res = await fetch('/content/manifest.json', { cache: 'no-store' });
+    const manifest = await res.json();
+    const categories = Array.isArray(manifest.categories) ? manifest.categories : [];
 
+    // build slides from categories (any number supported)
+    slides = categories.map(c => ({
+      title: c.title || c.slug,
+      text:  c.description || '…',
+      link:  `/directory.html?c=${encodeURIComponent(c.slug)}`,
+      image: c.bg || c.cover || 'img/delicate.jpg',
+      buttonText: `Browse ${c.title || c.slug}`
+    }));
+  } catch (e) {
+    console.error('Failed to load manifest for slides, falling back.', e);
+  }
 
+  // 2) Fallback if fetch fails or empty
+  if (!slides.length) {
+    slides = [
+      {
+        title: "Non/Media and Experiences",
+        text: "…",
+        link: "/directory.html?c=nonMedia",
+        image: "img/delicate.jpg",
+        buttonText: "Browse Non/Media & Experiences"
+      },
+      {
+        title: "Drawings",
+        text: "…",
+        link: "/directory.html?c=drawings",
+        image: "img/bambooGuitar.png",
+        buttonText: "Browse Drawings"
+      },
+      {
+        title: "Instruments and Crafts",
+        text: "…",
+        link: "/directory.html?c=crafts",
+        image: "img/moriPins.png",
+        buttonText: "Browse Instruments/Crafts"
+      }
+    ];
+  }
+
+  // 3) Carousel behavior (unchanged from your version)
   let current = 0;
 
   function updateSlide() {
     const slide = slides[current];
-  
     document.getElementById('carouselTitle').textContent = slide.title;
     document.getElementById('carouselText').textContent = slide.text;
     document.getElementById('carouselLink').href = slide.link;
     document.getElementById('carouselLink').textContent = slide.buttonText;
-  
+
     const container = document.getElementById('imageContainer');
     container.style.backgroundImage = `url('${slide.image}')`;
     container.style.backgroundSize = 'cover';
     container.style.backgroundPosition = 'center';
     container.style.transition = 'background-image 0.4s ease-in-out';
   }
+
   // Event Listeners for arrows
   document.querySelector('.carousel-nav.left').addEventListener('click', () => {
     current = (current - 1 + slides.length) % slides.length;
@@ -87,11 +109,9 @@ export function loadHomeContent() {
   }
 
   const slideElement = document.getElementById('carouselSlide');
-
   slideElement.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
   });
-
   slideElement.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
     handleGesture();

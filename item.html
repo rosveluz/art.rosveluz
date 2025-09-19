@@ -19,13 +19,17 @@
       <p id="itemMeta" class="muted"></p>
       <div id="hero" style="margin:12px 0;border-radius:12px;overflow:hidden"></div>
       <article id="content"></article>
+      <div id="footer"></div>
+
     </div>
   </div>
 
   <script type="module">
     import { loadHeader } from '/components/header.js';
     import '/components/itemPage.js';
+    import { loadFooter } from './components/footer.js';
     loadHeader();
+    loadFooter();
   </script>
 </body>
 </html>

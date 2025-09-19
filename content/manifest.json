@@ -17,6 +17,18 @@
       "title": "Instruments/Crafts",
       "bg": "/img/moriPins.png",
       "cover": "/img/moriPins.png"
+    },
+    {
+      "slug": "objects",
+      "title": "Objects",
+      "bg": "/img/moriPins.png",
+      "cover": "/img/moriPins.png"
+    },
+    {
+      "slug": "blog",
+      "title": "Words",
+      "bg": "/img/moriPins.png",
+      "cover": "/img/moriPins.png"
     }
   ],
   "items": [
@@ -26,10 +38,10 @@
       "category": "nonMedia",
       "summary": "Step-based audio tour",
       "date": "2025-08-10",
-      "tags": ["Audio","PWA"],
+      "tags": ["Audio", "PWA"],
       "thumb": "/content/nonMedia/encounterFUB/thumb.png",
-      "hero":  "/content/nonMedia/encounterFUB/hero.png",  
-      "md":    "/content/nonMedia/encounterFUB/encounterFUB.md"
+      "hero": "/content/nonMedia/encounterFUB/hero.png",
+      "md": "/content/nonMedia/encounterFUB/encounterFUB.md"
     },
     {
       "slug": "binary-lens",
@@ -37,12 +49,11 @@
       "category": "nonMedia",
       "summary": "ASCII camera",
       "date": "2025-08-10",
-      "tags": ["Digital Imagery","PWA"],
+      "tags": ["Digital Imagery", "PWA"],
       "thumb": "/content/nonMedia/binary-lens/thumb.png",
-      "hero":  "/content/nonMedia/binary-lens/hero.png", 
-      "md":    "/content/nonMedia/binary-lens/binary-lens.md"
+      "hero": "/content/nonMedia/binary-lens/hero.png",
+      "md": "/content/nonMedia/binary-lens/binary-lens.md"
     },
-
     {
       "slug": "old-drawings",
       "title": "Old Drawings",
@@ -65,7 +76,6 @@
       "hero": "/img/moriPins.png",
       "md": "/content/drawings/patterns-tessellations.md"
     },
-
     {
       "slug": "coconut-djembe-2024",
       "title": "Coconut Djembe 2024",

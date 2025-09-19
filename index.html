@@ -19,6 +19,7 @@
             
             <div id="header"></div>
             <div id="homeContent"></div>
+            <div id="footer"></div>
 
         </div>
         
@@ -26,9 +27,11 @@
     <script type="module">
         import { loadHeader } from './components/header.js';
         import { loadHomeContent } from './components/homeContent.js'; // ✅ import your carousel module
-      
+        import { loadFooter } from './components/footer.js';
+        
         loadHeader();
         loadHomeContent(); // ✅ render the carousel
+        loadFooter();
     </script>
 </body>
 </html>

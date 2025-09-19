@@ -1,101 +1,75 @@
-// components/directory-page.js
+// directory-page.js
 import { getCategory, listItemsByCategory } from './md-api.js';
 import { renderCards } from './directoryCard.js';
 
 const params = new URLSearchParams(location.search);
 const cat = params.get('c');
 
+// If this file accidentally runs on other pages, just do nothing.
 const app = document.getElementById('app');
-app.innerHTML = `<p class="muted">Loading…</p>`;
+if (!app || !cat) {
+  console.debug('[directory-page] Not on directory.html or missing ?c=; skipping.');
+} else {
+  // Minimal shell (keep your layout)
+  app.innerHTML = `<section id="dirGrid"></section>`;
+  const gridEl = document.getElementById('dirGrid');
 
-function setCategoryBackground(category) {
-  const bgUrl = category?.bg || category?.cover;
-  const host  = document.getElementById('imageContainer') || document.body;
-  if (!bgUrl) { host.style.backgroundImage = ''; return; }
-
-  const img = new Image();
-  img.onload = () => {
-    host.style.backgroundImage =
-      `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('${bgUrl}')`;
+  function applyCategoryBackground(category) {
+    const host = document.getElementById('imageContainer') || document.body;
+    const url = category?.bg || category?.cover;
+    if (!url) return;
+    host.style.backgroundImage = `url('${url}')`;
     host.style.backgroundSize = 'cover';
     host.style.backgroundPosition = 'center';
     host.style.backgroundRepeat = 'no-repeat';
-    host.style.transition = 'background-image .35s ease';
-  };
-  img.onerror = () => { host.style.backgroundImage = ''; };
-  img.src = bgUrl;
-}
-
-function injectJsonLd(obj) {
-  const id = 'jsonld-itemlist';
-  const existing = document.getElementById(id);
-  if (existing) existing.remove();
-  const s = document.createElement('script');
-  s.type = 'application/ld+json';
-  s.id = id;
-  s.textContent = JSON.stringify(obj);
-  document.head.appendChild(s);
-}
-
-function buildItemListJsonLd(category, items) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": `${category.title} — Portfolio`,
-    "itemListElement": items.map((i, idx) => ({
-      "@type": "ListItem",
-      "position": idx + 1,
-      "url": `${location.origin}/item.html?c=${encodeURIComponent(i.category)}&s=${encodeURIComponent(i.slug)}`,
-      "name": i.title,
-      ...(i.thumb   ? { "image": new URL(i.thumb, location.origin).href } : {}),
-      ...(i.summary ? { "description": i.summary } : {}),
-      ...(i.date    ? { "datePublished": i.date } : {})
-    }))
-  };
-}
-
-// Optional: wire up analytics here (you can replace console.log with gtag/plausible)
-function onCardClick(item, index /*, event */) {
-  console.log('[analytics] card_click', { slug: item.slug, index, category: item.category });
-  // Example GA4:
-  // gtag('event', 'select_content', { content_type: 'portfolio_card', item_id: item.slug, index });
-}
-function onCardView(item, index /*, entry */) {
-  console.log('[analytics] card_view', { slug: item.slug, index, category: item.category });
-  // Example Plausible:
-  // plausible('Card View', { props: { slug: item.slug, category: item.category }});
-}
-
-(async () => {
-  try {
-    const category = await getCategory(cat);
-    if (!category) {
-      app.innerHTML = `<p class="muted">Category not found.</p>`;
-      return;
-    }
-
-    // Background + tab title (no H1 injected on page)
-    setCategoryBackground(category);
-    document.title = `${category.title} — Directory`;
-
-    const items = await listItemsByCategory(cat);
-
-    // Render via shared directoryCard with a11y + analytics hooks
-    renderCards(app, items, {
-      ariaLabel: category.title,
-      clickWholeCard: true,
-      onCardClick,
-      onCardView
-    });
-
-    if (!items.length) {
-      app.insertAdjacentHTML('beforeend',
-        `<p class="muted">No items found in this category.</p>`);
-    }
-
-    injectJsonLd(buildItemListJsonLd(category, items));
-  } catch (e) {
-    console.error(e);
-    app.innerHTML = `<p class="muted">Failed to load directory.</p>`;
+    host.style.transition = 'background-image 0.4s ease-in-out';
   }
-})();
+
+  // Check if a URL exists (GET used because some hosts don’t allow HEAD for static md)
+  async function urlExists(url) {
+    try {
+      const r = await fetch(url, { cache: 'no-store' });
+      return r.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  // Keep only items that are “ready”: md exists, not draft
+  async function filterReady(items) {
+    const checked = await Promise.all(items.map(async (i) => {
+      if (i.draft === true || i.published === false) return null;
+      if (!i.md) return null;
+      const ok = await urlExists(i.md);
+      return ok ? i : null;
+    }));
+    return checked.filter(Boolean);
+  }
+
+  (async () => {
+    try {
+      const category = await getCategory(cat);
+      if (!category) {
+        app.innerHTML = `<p class="muted">Category not found.</p>`;
+        return;
+      }
+
+      // Category-specific background
+      applyCategoryBackground(category);
+
+      // List items for this category, but only those whose .md exists
+      const rawItems = await listItemsByCategory(cat);
+      const items = await filterReady(rawItems);
+
+      if (!items.length) {
+        app.innerHTML = `<p class="muted">No projects yet.</p>`;
+        return;
+      }
+
+      renderCards(gridEl, items);
+    } catch (e) {
+      console.error(e);
+      app.innerHTML = `<p class="muted">Failed to load directory.</p>`;
+    }
+  })();
+}
