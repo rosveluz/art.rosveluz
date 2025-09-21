@@ -1,16 +1,19 @@
 /* =========================================================
-   0) Custom properties (used by focus rings, etc.)
+   0) Custom properties
    ========================================================= */
-:root {
-  --accent: #7c9cff; /* focus ring + button hover */
+:root{
   --bg:#0b0b0b;
-  --fg:#f2f2f2;        /* a touch brighter than #ececec */
-  --muted:#b3b3b3;
-  --card:#121212;      /* card background */
+  --fg-dark:#ececec;   /* text on dark backgrounds (most of site) */
+  --fg-light:#1d1d1d;  /* text on light backgrounds (carousel card) */
+  --muted:#a3a3a3;
+  --card:#161616;
   --accent:#7c9cff;
   --br:18px;
   --max:clamp(320px,92vw,960px);
 }
+/* keep a generic --fg if you want, but make it alias the dark one */
+:root{ --fg: var(--fg-dark); }
+
 
 /* =========================================================
    1) Reset & base
@@ -21,7 +24,8 @@
 html, body {
   font-family: "Inter Tight", sans-serif;
   line-height: 1.5;
-  background-color: #000;
+  background: #000;
+  color: var(--fg);
 }
 
 body {
@@ -34,7 +38,6 @@ body {
    2) Typography
    ========================================================= */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Inter Tight", sans-serif;
   font-weight: 400;
   margin: 10px 0;
   text-wrap: balance;
@@ -43,8 +46,9 @@ h1, h2, h3, h4, h5, h6 {
 p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 p { text-wrap: pretty; }
 
-#itemTitle { color: #f7f7f7; } /* or any color you want */
+#itemTitle { color: #f7f7f7; }
 
+.muted { color: var(--muted); }
 
 /* =========================================================
    3) Media & form controls
@@ -60,7 +64,6 @@ input, button, textarea, select { font: inherit; }
   flex-direction: column;
   align-items: center;
   justify-content: stretch;
-  min-height: 100vh;
   min-height: 100svh;
   width: 100%;
 }
@@ -68,20 +71,21 @@ input, button, textarea, select { font: inherit; }
 /* Main wrapper — handles width & horizontal padding */
 #homeWrapper {
   width: 100%;
-  max-width: clamp(320px, 92vw, 720px);
-  padding: 0 clamp(16px, 4vw, 24px);
+  max-width: min(100%, 720px);   /* full width on phones, capped on desktop */
+  padding: 0 var(--page-gutter);
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* take up available space */
+  flex-grow: 1;
 }
+
+@media (max-width: 640px) {
+  #homeWrapper { --page-gutter: 16px; }
+}
+
 
 /* Background host for home + directory pages */
 #imageContainer {
-  background-color: #000; /* fallback */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
+  background: #000 no-repeat center / cover; /* fallback + positioning */
   min-height: 100svh;
   transition: background-image 0.6s ease-in-out, opacity 0.4s ease;
 }
@@ -92,7 +96,6 @@ input, button, textarea, select { font: inherit; }
 /* =========================================================
    5) Utilities
    ========================================================= */
-/* Screen-reader friendly, visually hidden */
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;
@@ -104,11 +107,11 @@ input, button, textarea, select { font: inherit; }
 /* =========================================================
    6) Cards (directory cards)
    ========================================================= */
-
-/* ensure light text on dark card */
-.card { color: var(--fg); }           /* --fg is #ececec in your :root */
-.card a { color: inherit; }           /* links follow light text color */
-.muted { color: var(--muted); }       /* keep your softer gray for metadata */
+.card{
+  background:var(--card);
+  color:var(--fg-dark);   /* was var(--fg), now explicit */
+}
+.card a{ color:inherit; }
 
 
 .card--clickable {
@@ -117,8 +120,8 @@ input, button, textarea, select { font: inherit; }
   -webkit-tap-highlight-color: rgba(255,255,255,0.08);
 }
 .card--clickable:hover {
-  transform: translateY();
-  box-shadow: 0 8px 24px #c3f88642;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.30);
   border-color: #333;
 }
 .card--clickable:active {
@@ -127,7 +130,7 @@ input, button, textarea, select { font: inherit; }
 }
 .card--clickable:focus { outline: none; }
 .card--clickable:focus-visible {
-  box-shadow: 0 0 0 3px hsla(133, 100%, 69%, 0.6), 0 8px 24px rgba(0,0,0,.30);
+  box-shadow: 0 0 0 3px rgba(124,156,255,.60), 0 8px 24px rgba(0,0,0,.30);
   border-color: var(--accent);
 }
 
@@ -144,13 +147,12 @@ input, button, textarea, select { font: inherit; }
 }
 
 /* Directory grid layout */
-.grid{
+.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
   align-items: start;
 }
-
 
 /* =========================================================
    7) Motion preferences
@@ -159,107 +161,107 @@ input, button, textarea, select { font: inherit; }
   .card--clickable { transition: none; }
 }
 
-
-/* ===== Header nav ===== */
+/* =========================================================
+   8) Header (light, non-invasive)
+   ========================================================= */
 .header-inner {
-  display:flex;
-  align-items:center;
-  gap:16px;
-  justify-content:space-between
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
 }
 .site-title {
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-  font-size:18px
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 18px;
 }
-.main-nav {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap
+.main-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.nav__link {
+  color: #aaa;
+  text-decoration: none;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 6px 10px;
+  background: #0f0f0f;
 }
-.nav__link{
-  color:#aaa;
-  text-decoration:none;
-  border:1px solid #222;
-  border-radius:12px;
-  padding:6px 10px;
-  background:#0f0f0f
+.nav__link:hover { color: #fff; border-color: #333; }
+.nav__link--active { color: #fff; border-color: #444; background: #1b1b1b; }
+
+/* =========================================================
+   9) Directory controls + pagination
+   ========================================================= */
+.controls {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 16px 0;
 }
-.nav__link:hover {
-  color:#fff;
-  border-color:#333
+.controls label {
+  font-size: 13px; color: #a8a8a8; display: flex; gap: 6px; align-items: center;
 }
-.nav__link--active {
-  color:#fff;
-  border-color:#444;
-  background:#1b1b1b
+.controls select,
+.controls input[type="search"] {
+  background: #121212; color: #eee; border: 1px solid #2a2a2a;
+  border-radius: 10px; padding: 6px 10px;
 }
 
-/* ===== Directory controls + pagination ===== */
-.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}
-.controls label{font-size:13px;color:#a8a8a8;display:flex;gap:6px;align-items:center}
-.controls select,.controls input[type="search"]{
-  background:#121212;color:#eee;border:1px solid #2a2a2a;border-radius:10px;padding:6px 10px
+.pagination {
+  display: flex; gap: 8px; align-items: center; justify-content: center; margin: 20px 0;
 }
-.pagination{display:flex;gap:8px;align-items:center;justify-content:center;margin:20px 0}
-.pagination button{
-  background:#121212;color:#eee;border:1px solid #2a2a2a;border-radius:8px;padding:6px 10px;cursor:pointer
+.pagination button {
+  background: #121212; color: #eee; border: 1px solid #2a2a2a; border-radius: 8px;
+  padding: 6px 10px; cursor: pointer;
 }
-.pagination button[disabled]{opacity:.45;cursor:not-allowed}
-.pagination .current{color:#fff;border-color:#444}
+.pagination button[disabled] { opacity: .45; cursor: not-allowed; }
+.pagination .current { color: #fff; border-color: #444; }
 
-/* ===== Footer ===== */
-
+/* =========================================================
+   10) Footer (single centered row)
+   ========================================================= */
 .site-footer {
-  margin-top:32px
+  display: flex; 
+  justify-content: center; 
 }
 .footer__inner {
-  max-width:clamp(320px,92vw,960px);
-  margin:0 auto;
-  display:flex;
-  gap:16px;
-  align-items:center;
-  justify-content:space-between;
-  padding:16px 0px
+  max-width: var(--max);
+  margin: 0 auto;
+  width: 100%;                  /* ⬅️ stretch */
+  flex: 1 1 auto;               /* ⬅️ allow it to grow in the flex parent */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
+
 .logo {
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  color:#fff;
-  font-weight:700
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; font-weight: 700;
 }
-/* style the new link class */
-.footerText{
-  display:inline-block;
-  color:#eee;
-  text-decoration:none;
-  padding:8px 12px;
-  border:1px solid #2a2a2a;
-  border-radius:10px;
-  text-align:center;
-  margin-inline:auto;       /* extra safety if not using flex */
+
+.site-footer .footer__copyright {
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.footerText {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #ddd;
+  text-decoration: none;
+  white-space: nowrap;
 }
 .footerText:hover,
-.footerText:focus-visible{
-  border-color:#444;
-  outline:none;
+.footerText:focus-visible {
+  color: #fff;
+  border-color: var(--accent);
 }
 
-/* mobile: center the actions horizontally + center text */
-@media (max-width: 640px){
-  .site-footer .footer__inner{
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .footer__actions{
-    width:100%;
-    display:flex;
-    justify-content:center;   /* ← centers horizontally */
-  }
-
+/* tiny screens: tighten padding/size slightly */
+@media (max-width: 380px) {
+  .site-footer .footer__copyright { font-size: 13px; }
+  .footerText { padding: 6px 10px; font-size: 13px; }
 }

@@ -13,24 +13,24 @@
 }
 
 .logo {
-  height: 60px;
+  height: 40px;
   width: auto;
 }
 
 .menu-icon {
   width: 32px;
-  height: 32px;
+  height: 32x;
   cursor: pointer;
   display: block;
 }
 
 nav {
   position: absolute;
-  top: 120px;
+  top: 80px;
   left: 50%;                          /* ✅ Center horizontally */
   transform: translateX(-50%);        /* ✅ Compensate for 50% left */
   width: 100%;
-  max-width: clamp(320px, 84vw, 720px); /* ✅ Match #homeWrapper width */
+  max-width: clamp(340px, 84vw, 720px); /* ✅ Match #homeWrapper width */
   padding: 20px;
   border-radius: 12px;
   /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
