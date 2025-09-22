@@ -7,7 +7,7 @@
   --fg-light:#1d1d1d;  /* text on light backgrounds (carousel card) */
   --muted:#a3a3a3;
   --card:#161616;
-  --accent:#7c9cff;
+  --accent:#1cf871;
   --br:18px;
   --max:clamp(320px,92vw,960px);
 }
@@ -265,3 +265,26 @@ input, button, textarea, select { font: inherit; }
   .site-footer .footer__copyright { font-size: 13px; }
   .footerText { padding: 6px 10px; font-size: 13px; }
 }
+
+/* --- Contact page utilities --- */
+.stack {                /* vertical stack with gap */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.full-width {           /* fill the available width of #homeWrapper */
+  width: 100%;
+  max-width: none;
+}
+
+.panel {                /* card look */
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.panel h2 { margin: 0 0 8px 0; }
+.panel p  { margin: 0 0 12px 0; }
