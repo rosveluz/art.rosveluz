@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/component-styles/header.css" />
   <link rel="stylesheet" href="/component-styles/itemPage.css" />
+  <link rel="stylesheet" href="../component-styles/socialRow.css">
 </head>
 <body>
   <div class="main-container" id="imageContainer">
@@ -26,26 +27,24 @@
         </div>
 
         <div style="background:#111;border:1px solid #222;border-radius:14px;padding:16px;">
-          <h2 style="margin:0 0 8px 0;">Email</h2>
-          <p style="margin:0 0 12px 0;">
-            <a href="mailto:hello@rosveluz.com" class="footerText">hello@rosveluz.com</a>
-          </p>
+          <h2 style="margin:0 0 8px 0;">Socials</h2>
+          <div class="social-row"></div>
         </div>
-
       </section>
 
       <div id="footer" style="margin-top:24px;"></div>
     </div>
   </div>
-    <script type="module">
-        import { loadHeader } from './components/header.js';
-        import { loadHomeContent } from './components/homeContent.js'; // ✅ import your carousel module
-        import { loadFooter } from './components/footer.js';
-        
-        loadHeader();
-        loadHomeContent(); // ✅ render the carousel
-        loadFooter();
-    </script>
+  <script type="module">
+    import { loadHeader }   from '/components/header.js';
+    import { loadSocialRow } from '/components/socialRow.js';
+    import { loadFooter }   from '/components/footer.js';
+
+    loadHeader();
+    loadSocialRow();
+    loadFooter();
+  </script>
+
 
 </body>
 </html>

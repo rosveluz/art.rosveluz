@@ -13,7 +13,7 @@
 }
 
 .logo {
-  height: 40px;
+  height: 48px;
   width: auto;
 }
 
@@ -31,7 +31,7 @@ nav {
   transform: translateX(-50%);        /* ✅ Compensate for 50% left */
   width: 100%;
   max-width: clamp(340px, 84vw, 720px); /* ✅ Match #homeWrapper width */
-  padding: 20px;
+  padding: 8px 16px;
   border-radius: 12px;
   /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
   background-color: white;

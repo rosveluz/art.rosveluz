@@ -2,13 +2,13 @@
   "categories": [
     {
       "slug": "nonMedia",
-      "title": "Non/Media and Experiences",
+      "title": "Non/Media",
       "bg": "/img/delicate.jpg",
       "cover": "/img/delicate.jpg"
     },
     {
-      "slug": "drawings",
-      "title": "Drawings",
+      "slug": "surfaces",
+      "title": "Surfaces",
       "bg": "/img/bambooGuitar.png",
       "cover": "/img/bambooGuitar.png"
     },

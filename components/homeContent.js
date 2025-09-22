@@ -1,47 +1,49 @@
-export async function loadHomeContent() {
-  // Render the shell immediately
+// components/homeContent.js
+export function loadHomeContent() {
   document.getElementById('homeContent').innerHTML = `
     <div class="carousel-wrapper">
-      <button class="carousel-nav left" aria-label="Previous slide">&#10094;</button>
+      <button class="carousel-nav left">&#10094;</button>
 
       <div class="carousel-slide" id="carouselSlide">
-        <h2 id="carouselTitle">Loading…</h2>
-        <p id="carouselText"></p>
-        <a href="#" id="carouselLink" class="link-button" aria-label="Open category">Open</a>
+        <h2 id="carouselTitle">Artworks</h2>
+        <p id="carouselText">Veluz's creative expression is deeply informed by...</p>
+        <a href="/art.html" id="carouselLink" class="link-button">Link Button</a>
       </div>
 
-      <button class="carousel-nav right" aria-label="Next slide">&#10095;</button>
+      <button class="carousel-nav right">&#10095;</button>
     </div>
   `;
 
-  let slides = [
-      {
-        title: "Non/Media and Experiences",
-        text: "…",
-        link: "/directory.html?c=nonMedia",
-        image: "img/delicate.jpg",
-        buttonText: "Browse Non/Media & Experiences"
-      },
-      {
-        title: "Drawings",
-        text: "…",
-        link: "/directory.html?c=drawings",
-        image: "img/bambooGuitar.png",
-        buttonText: "Browse Drawings"
-      },
-      {
-        title: "Instruments and Crafts",
-        text: "…",
-        link: "/directory.html?c=crafts",
-        image: "img/moriPins.png",
-        buttonText: "Browse Instruments/Crafts"
-      }
+  // Define slides
+  const slides = [
+    {
+      title: "Non/Media",
+      text: "…",
+      link: "/directory.html?c=nonMedia",
+      image: "img/delicate.jpg",
+      buttonText: "Browse Non/Media"
+    },
+    {
+      title: "Surfaces",
+      text: "…",
+      link: "/directory.html?c=surfaces",
+      image: "img/bambooGuitar.png",
+      buttonText: "Browse Surfaces"
+    },
+    {
+      title: "Objects",
+      text: "…",
+      link: "/directory.html?c=objects",
+      image: "img/moriPins.png",
+      buttonText: "Browse Objects"
+    }
   ];
 
   let current = 0;
 
   function updateSlide() {
     const slide = slides[current];
+
     document.getElementById('carouselTitle').textContent = slide.title;
     document.getElementById('carouselText').textContent = slide.text;
     document.getElementById('carouselLink').href = slide.link;
@@ -86,13 +88,16 @@ export async function loadHomeContent() {
   }
 
   const slideElement = document.getElementById('carouselSlide');
+
+  // Mark touch events as passive so they don't block scrolling.
   slideElement.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
-  });
+  }, { passive: true });
+
   slideElement.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
     handleGesture();
-  });
+  }, { passive: true });
 
   // Auto slide every 5 seconds
   let autoSlideInterval = setInterval(() => {
