@@ -10,6 +10,7 @@
   --accent:#1cf871;
   --br:18px;
   --max:clamp(320px,92vw,960px);
+  --page-gutter: clamp(16px, 4vw, 24px);
 }
 /* keep a generic --fg if you want, but make it alias the dark one */
 :root{ --fg: var(--fg-dark); }

@@ -1,64 +1,63 @@
-#header {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+/* Header container stays centered and constrained */
+#header{
+  width:100%;
+  display:flex;
+  justify-content:center;
 }
 
-#header > header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0; /* No horizontal padding here — handled by #homeWrapper */
+#header > header{
+  position:relative;                 /* anchor the dropdown */
+  width:100%;
+  max-width: min(100%, 720px);       /* or: var(--max) */
+  margin:0 auto;
+  padding:16px 0px;   /* same gutter as content */
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-.logo {
-  height: 48px;
-  width: auto;
+/* brand & toggle */
+.logo{ height:48px; width:auto; }
+.menu-icon{ width:32px; height:32px; cursor:pointer; display:block; }
+
+/* 🔒 Only style the dropdown with this id */
+#navMenu{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;                 /* stretch to header's inner width */
+  right:0;
+  width:auto;
+  max-width:100%;
+  margin:0;
+  padding:8px 0;          /* link padding supplies horizontal gutter */
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  display:none;           /* toggled via .visible */
+  flex-direction:column;
+  gap:0;
+  z-index:1000;
 }
 
-.menu-icon {
-  width: 32px;
-  height: 32x;
-  cursor: pointer;
-  display: block;
+/* links inherit the same horizontal gutter */
+#navMenu a{
+  display:block;
+  padding:12px var(--page-gutter);
+  font-size:1.1rem;
+  line-height:1.5;
+  font-weight:600;
+  text-decoration:none;
+  color:#333;
+  border-bottom:1px solid #e8e8e8;
+  background:transparent;            /* avoid white “buttons” inside */
+  width:100%;
+  box-sizing:border-box;
 }
+#navMenu a:last-child{ border-bottom:none; }
 
-nav {
-  position: absolute;
-  top: 80px;
-  left: 50%;                          /* ✅ Center horizontally */
-  transform: translateX(-50%);        /* ✅ Compensate for 50% left */
-  width: 100%;
-  max-width: clamp(340px, 84vw, 720px); /* ✅ Match #homeWrapper width */
-  padding: 8px 16px;
-  border-radius: 12px;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
+/* toggle helpers */
+.hidden{ display:none !important; }
+.visible{ display:flex !important; }
 
-nav a {
-  font-size: 1.2rem;
-  line-height: 2.3rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: #444;
-  border-bottom: 2px solid #444;
-}
-
-nav a:last-child {
-  border-bottom: none;
-}
-
-
-.hidden {
-  display: none;
-}
-.visible {
-  display: flex;
-}
+/* iOS: prevent auto text zoom from shrinking layout */
+html{ -webkit-text-size-adjust:100%; }
