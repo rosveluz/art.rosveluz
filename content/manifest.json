@@ -49,15 +49,15 @@
       "md": "/content/nonMedia/binary-lens/binary-lens.md"
     },
     {
-      "slug": "old-drawings",
-      "title": "Old Drawings",
-      "category": "drawings",
-      "summary": "Archival sketches",
+      "slug": "boneheadxbadfish",
+      "title": "Bonehead X Badfish",
+      "category": "objects",
+      "summary": "Resin Smoking Pipes",
       "date": "2022-05-01",
-      "tags": ["Pencil"],
-      "thumb": "/img/delicate.jpg",
-      "hero": "/img/delicate.jpg",
-      "md": "/content/drawings/old-drawings.md"
+      "tags": ["Resin"],
+      "thumb": "/content/objects/bonehead-badfish/thumbnail.webp",
+      "hero": "/content/objects/bonehead-badfish/thumbnail.webp",
+      "md": "/content/objects/bonehead-badfish/bonehead-badfish.md"
     } 
 
   ]

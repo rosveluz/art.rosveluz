@@ -23,24 +23,57 @@ function parseFrontmatter(raw){
   if (!raw.startsWith('---')) return { data:{}, body:raw };
   const end = raw.indexOf('\n---', 3);
   if (end === -1) return { data:{}, body:raw };
+
   const header = raw.slice(3, end).trim();
   const body   = raw.slice(end + 4).trim();
 
   const data = {};
-  header.split(/\r?\n/).forEach(line=>{
-    const m = line.match(/^([A-Za-z0-9_]+):\s*(.+)$/);
-    if (!m) return;
-    const key = m[1];
-    let val  = m[2].trim();
-    // try JSON for arrays/objects
-    if (val.startsWith('[') || val.startsWith('{')){
-      try { val = JSON.parse(val); } catch { /* keep as string if parse fails */ }
-    } else {
-      // strip optional quotes
-      val = val.replace(/^"|"$/g,'');
+  const lines = header.split(/\r?\n/);
+  let i = 0;
+
+  const depth = (s) => {
+    let d = 0;
+    for (const ch of s) {
+      if (ch === '[' || ch === '{') d++;
+      else if (ch === ']' || ch === '}') d--;
     }
+    return d;
+  };
+
+  while (i < lines.length) {
+    let line = lines[i].trim();
+    i++;
+    if (!line) continue;
+
+    const m = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+    if (!m) continue;
+
+    const key = m[1];
+    let val = m[2].trim();
+
+    // If value starts an array/object, accumulate until brackets close
+    if (val.startsWith('[') || val.startsWith('{')) {
+      let buf = val;
+      let d = depth(val);
+      while (d > 0 && i < lines.length) {
+        const next = lines[i++];
+        buf += '\n' + next;
+        d += depth(next);
+      }
+      try {
+        data[key] = JSON.parse(buf);
+      } catch {
+        // If parsing fails, store the raw text so page still renders
+        data[key] = buf;
+      }
+      continue;
+    }
+
+    // Simple scalars: strip optional quotes
+    val = val.replace(/^"|"$/g, '');
     data[key] = val;
-  });
+  }
+
   return { data, body };
 }
 
@@ -333,9 +366,15 @@ const back    = document.getElementById('backLink');
 
     let gallery = [];
 
+    // Try to ensure front-matter gallery is an array (even if it arrived as a string)
+    let fmGallery = data.gallery;
+    if (typeof fmGallery === 'string') {
+      try { fmGallery = JSON.parse(fmGallery); } catch { /* ignore */ }
+    }
+
     // A) front-matter gallery (preferred)
-    if (Array.isArray(data.gallery) && data.gallery.length){
-      gallery = data.gallery.map(g => {
+    if (Array.isArray(fmGallery) && fmGallery.length) {
+      gallery = fmGallery.map(g => {
         if (typeof g === 'string') return { src: join(mdDir, g) };
         return { src: join(mdDir, g.src), alt: g.alt || '' };
       });
@@ -349,9 +388,11 @@ const back    = document.getElementById('backLink');
       gallery = await scanGallery(mdDir);
     }
 
+    // Render hero + gallery
     if ((heroSrc || gallery.length) && heroEl) {
       renderGallery(heroEl, gallery, heroSrc);
     } else if (item.hero && heroEl) {
+      // single-image fallback
       heroEl.style.margin = '12px 0';
       heroEl.style.borderRadius = '12px';
       heroEl.style.overflow = 'hidden';
